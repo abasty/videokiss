@@ -1,0 +1,37 @@
+PROJECT(AUTOPROD)
+
+SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeScripts)
+
+FIND_PACKAGE(GTK2 REQUIRED)
+
+INCLUDE_DIRECTORIES(
+	${AUTOPROD_SOURCE_DIR}/lua/include
+	${GTK2_INCLUDE_DIRS}
+)
+
+LINK_DIRECTORIES(
+	${AUTOPROD_SOURCE_DIR}/lua
+)
+
+ADD_EXECUTABLE(
+	# exe
+	autoprod
+
+	# sources
+	autoprod.c
+
+	# headers
+)
+
+ADD_DEFINITIONS(-DLUA_USE_LINUX)
+
+TARGET_LINK_LIBRARIES(
+	# exe
+	autoprod
+
+	# libs
+	lua
+	${GTK2_LIBRARIES}
+)
+
+
