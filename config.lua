@@ -24,20 +24,19 @@
 home_dir = os.getenv("HOME")
 
 -- several paths relative to home directory
-clips_dir = "Desktop/clips"
-themes_dir = "Desktop/clips"
-movie_dir = "Desktop"
+clips_dir = home_dir .. "/Desktop"
+themes_dir = home_dir .. "/Desktop"
+movie_dir = home_dir .. "/Desktop"
 
 -- Output formats
 formats = {
-	# SDL output
 	{
-		name = "Ecran SDL"
+		name = "Ecran (SDL)"
 	},
 	{
-		name = "XVid basse résolution",
-		extension = ".avi",
-		consumer = "avformat:$file real_time=0 format=avi video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=64000 frequency=32000 size=$size vcodec=xvid progressive=1",
+		name = "XVid Basse Résolution",
+		consumer = "avformat:$clips.avi real_time=0 size=$size",
+		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=64000 frequency=32000 vcodec=xvid progressive=1",
 	},
 }
 
