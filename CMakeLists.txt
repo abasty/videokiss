@@ -15,6 +15,14 @@ LINK_DIRECTORIES(
 	${AUTOPROD_SOURCE_DIR}/lua
 )
 
+ADD_CUSTOM_COMMAND(
+	OUTPUT  ${AUTOPROD_BINARY_DIR}/config.lua.o
+	COMMAND ln -sf ${AUTOPROD_SOURCE_DIR}/config.lua .
+	COMMAND objcopy --input binary --output elf32-i386 --binary-architecture i386 config.lua config.lua.o
+	DEPENDS config.lua
+	COMMENT "Objectifying config.lua..."
+)
+
 ADD_EXECUTABLE(
 	# exe
 	autoprod
@@ -23,6 +31,9 @@ ADD_EXECUTABLE(
 	autoprod.c
 
 	# headers
+	
+	# objects
+	${AUTOPROD_BINARY_DIR}/config.lua.o
 )
 
 ADD_DEFINITIONS(-DLUA_USE_LINUX)
@@ -36,5 +47,4 @@ TARGET_LINK_LIBRARIES(
 	${GTK2_LIBRARIES}
 	${GLADE_LIBRARIES}
 )
-
 

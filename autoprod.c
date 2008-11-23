@@ -9,6 +9,14 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+extern char _binary_config_lua_start;
+extern char _binary_config_lua_end;
+
+# ifndef luaL_dobuffer
+#  define luaL_dobuffer(L, s, sz) \
+    (luaL_loadbuffer(L, (const char*)s, sz, (const char*)s) || lua_pcall(L, 0, LUA_MULTRET, 0))
+# endif
+
 #define MAX_FORMATS_COUNT	32
 
 typedef void (CallbackGetConfigListItem)(GtkWidget* widget);
@@ -106,7 +114,7 @@ void getConfig(void)
 {
 	GtkWidget* widget;
 	
-	globals.home_dir = getConfigString("home_dir");
+ 	globals.home_dir = getConfigString("home_dir");
 	
 	globals.clips_dir = getConfigString("clips_dir");
 	if (g_file_test(globals.clips_dir, G_FILE_TEST_IS_DIR))
@@ -166,17 +174,11 @@ int main(int argc, char *argv[])
 	}
 	luaL_openlibs(globals.L);
 
-	// read config files
-	if (runLuaFile(globals.L, "config.lua") != 0)
-	{
-		// TODO: no config file...
-		// run a default lua string in memory ?
-	}
-	else
-	{
-		// get config from lua to C
-		getConfig();
-	}
+	// run inlined config script
+  	luaL_dobuffer(globals.L, &_binary_config_lua_start, &_binary_config_lua_end - &_binary_config_lua_start);
+  	
+	// get config from Lua
+   	getConfig();
 
 	// run
 	gtk_main();
