@@ -5,19 +5,10 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include "lua.h"
-#include "lauxlib.h"
-#include "lualib.h"
+#include "autoprod.h"
 
 extern char _binary_config_lua_start;
 extern char _binary_config_lua_end;
-
-# ifndef luaL_dobuffer
-#  define luaL_dobuffer(L, s, sz) \
-    (luaL_loadbuffer(L, (const char*)s, sz, (const char*)s) || lua_pcall(L, 0, LUA_MULTRET, 0))
-# endif
-
-int inigo(int argc, char **argv);
 
 #define MAX_FORMATS_COUNT	32
 
@@ -35,22 +26,11 @@ struct
 	lua_State *L;
 
 	char* home_dir;
-	char* clips_dir;
-	char* themes_dir;
-	char* movie_dir;
-
+	
 	TypeFormat formats[MAX_FORMATS_COUNT];
 	int formats_count;
 
 } globals;
-
-int runLuaFile(lua_State *L, const char *name)
-{
-	int status = luaL_loadfile(L, name);
-	if (status == 0)
-		lua_call(L, 0, 1);
-	return status;
-}
 
 char* getConfigString(const char* name)
 {
@@ -117,28 +97,31 @@ void getConfigList(const char* name, CallbackGetConfigListItem* itemCallback, Gt
 void getConfig(void)
 {
 	GtkWidget* widget;
+	char* clips_dir;
+	char* themes_dir;
+	char* movie_dir;
 
 	globals.home_dir = getConfigString("home_dir");
 
-	globals.clips_dir = getConfigString("clips_dir");
-	if (g_file_test(globals.clips_dir, G_FILE_TEST_IS_DIR))
+	clips_dir = getConfigString("clips_dir");
+	if (g_file_test(clips_dir, G_FILE_TEST_IS_DIR))
 	{
 		widget = glade_xml_get_widget(globals.xml, "fcClips");
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), globals.clips_dir);
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), clips_dir);
 	}
 
-	globals.themes_dir = getConfigString("themes_dir");
-	if (g_file_test(globals.themes_dir, G_FILE_TEST_IS_DIR))
+	themes_dir = getConfigString("themes_dir");
+	if (g_file_test(themes_dir, G_FILE_TEST_IS_DIR))
 	{
 		widget = glade_xml_get_widget(globals.xml, "fcTheme");
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), globals.themes_dir);
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), themes_dir);
 	}
 
-	globals.movie_dir = getConfigString("movie_dir");
-	if (g_file_test(globals.movie_dir, G_FILE_TEST_IS_DIR))
+	movie_dir = getConfigString("movie_dir");
+	if (g_file_test(movie_dir, G_FILE_TEST_IS_DIR))
 	{
 		widget = glade_xml_get_widget(globals.xml, "fcOut");
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), globals.movie_dir);
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), movie_dir);
 	}
 
 	widget = glade_xml_get_widget(globals.xml, "cmbSize");

@@ -32,8 +32,10 @@ ADD_EXECUTABLE(
 	# sources
 	autoprod.c
 	inigo.c
+	montage.c
 
 	# headers
+	autoprod.h
 	
 	# objects
 	${AUTOPROD_BINARY_DIR}/config.lua.o

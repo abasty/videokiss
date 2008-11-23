@@ -29,8 +29,6 @@
 #include <SDL.h>
 #endif
 
-// #include "io.h"
-
 static void transport_action(mlt_producer producer, char *value)
 {
 	mlt_properties properties = MLT_PRODUCER_PROPERTIES(producer);

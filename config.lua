@@ -70,3 +70,7 @@ rules = {
 		}
 	},
 }
+
+-- TODO
+-- Add code to load the theme (a file with a "rules" var definition), to browse the file list and to apply rules
+-- This code will build a table of inigo options
