@@ -17,12 +17,24 @@ LINK_DIRECTORIES(
 	${AUTOPROD_SOURCE_DIR}/lua
 )
 
+SET(CONFIG_LUA "config.lua")
+
 ADD_CUSTOM_COMMAND(
-	OUTPUT  ${AUTOPROD_BINARY_DIR}/config.lua.o
-	COMMAND ln -sf ${AUTOPROD_SOURCE_DIR}/config.lua .
-	COMMAND objcopy --input binary --output elf32-i386 --binary-architecture i386 config.lua config.lua.o
-	DEPENDS config.lua
-	COMMENT "Objectifying config.lua..."
+	OUTPUT  ${AUTOPROD_BINARY_DIR}/${CONFIG_LUA}.o
+	COMMAND ln -sf ${AUTOPROD_SOURCE_DIR}/${CONFIG_LUA} .
+	COMMAND objcopy --input binary --output elf32-i386 --binary-architecture i386 ${CONFIG_LUA} ${CONFIG_LUA}.o
+	DEPENDS ${CONFIG_LUA}
+	COMMENT "Objectifying ${CONFIG_LUA}..."
+)
+
+SET(AUTOPROD_GLADE "autoprod.glade")
+
+ADD_CUSTOM_COMMAND(
+	OUTPUT  ${AUTOPROD_BINARY_DIR}/${AUTOPROD_GLADE}.o
+	COMMAND ln -sf ${AUTOPROD_SOURCE_DIR}/${AUTOPROD_GLADE} .
+	COMMAND objcopy --input binary --output elf32-i386 --binary-architecture i386 ${AUTOPROD_GLADE} ${AUTOPROD_GLADE}.o
+	DEPENDS ${AUTOPROD_GLADE}
+	COMMENT "Objectifying ${AUTOPROD_GLADE}..."
 )
 
 ADD_EXECUTABLE(
@@ -38,7 +50,8 @@ ADD_EXECUTABLE(
 	autoprod.h
 	
 	# objects
-	${AUTOPROD_BINARY_DIR}/config.lua.o
+	${AUTOPROD_BINARY_DIR}/${CONFIG_LUA}.o
+	${AUTOPROD_BINARY_DIR}/${AUTOPROD_GLADE}.o
 )
 
 ADD_DEFINITIONS(-DLUA_USE_LINUX)

@@ -7,8 +7,13 @@
 
 #include "autoprod.h"
 
+// linked lua config file
 extern char _binary_config_lua_start;
 extern char _binary_config_lua_end;
+
+// linked glade file
+extern char _binary_autoprod_glade_start;
+extern char _binary_autoprod_glade_end;
 
 #define MAX_FORMATS_COUNT	32
 
@@ -161,8 +166,9 @@ int main(int argc, char *argv[])
 	// init gtk
 	gtk_init(&argc, &argv);
 
-	// load glade file
-	globals.xml = glade_xml_new("autoprod.glade", NULL, NULL);
+	// load glade buffer
+	globals.xml = glade_xml_new_from_buffer(&_binary_autoprod_glade_start, &_binary_autoprod_glade_end - &_binary_autoprod_glade_start, NULL, NULL);
+	
 	glade_xml_signal_autoconnect(globals.xml);
 
 	// create Lua state
