@@ -50,7 +50,15 @@ sizes = {
 rules = {
 	{ 
 		-- Data file
-		pattern = "(\\d+) -- (.*)\.(.*)", 
+		pattern = "(%d+) -- (.*)\.(.*)", 
+		value = {
+			"\"$0\"",
+			"-mix 25 -mixer luma -mixer mix:-1"
+		}
+	},
+
+	{ 
+		pattern = "(%d+) .. ", 
 		value = {
 			"\"$0\"",
 			"-mix 25 -mixer luma -mixer mix:-1"
@@ -59,7 +67,7 @@ rules = {
 
 	{
 		-- Title 
-		pattern = "(\\d+) -- (.*)", 
+		pattern = "(%d+) -- (.*)", 
 		value = {
 			"colour:black out=24",
 			"colour:black out=99",
@@ -84,6 +92,23 @@ function montage(clips, theme)
 		dofile(theme)
 	end
 	print ("#clips = ", #clips)
+	
+	-- foreach clip
+	for i,clip in ipairs(clips) do
+		for j,rule in ipairs(rules) do
+			print (clip .. " vs " .. rule.pattern)
+			capture = string.match(clip, rule.pattern)
+			if capture then
+				print ("match : " .. capture)
+			end
+		end
+	end
+	-- find the right rule
+	
+	-- If found: apply the rule
+	
+	-- If not, just ignore the file
+	
 end
 
 
