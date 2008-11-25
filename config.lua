@@ -50,15 +50,7 @@ sizes = {
 rules = {
 	{ 
 		-- Data file
-		pattern = "(%d+) -- (.*)\.(.*)", 
-		value = {
-			"\"$0\"",
-			"-mix 25 -mixer luma -mixer mix:-1"
-		}
-	},
-
-	{ 
-		pattern = "(%d+) .. ", 
+		pattern = "(%d+) %-%- (.*)%.(.*)", 
 		value = {
 			"\"$0\"",
 			"-mix 25 -mixer luma -mixer mix:-1"
@@ -67,7 +59,7 @@ rules = {
 
 	{
 		-- Title 
-		pattern = "(%d+) -- (.*)", 
+		pattern = "(%d+) %-%- (.*)", 
 		value = {
 			"colour:black out=24",
 			"colour:black out=99",
@@ -82,11 +74,8 @@ rules = {
 -- TODO
 -- Add code to create ~/.autoprod and to store the default settings (directories, formats, sizes, rules) ?
 
--- TODO
--- Add code to load the theme (a file with a "rules" var definition), to browse the file list and to apply rules
--- This code will build a table of inigo options
-
 function montage(clips, theme)
+	-- load the theme (a file with a "rules" var definition)
 	if theme then
 		print ("theme =", theme)
 		dofile(theme)
@@ -95,20 +84,16 @@ function montage(clips, theme)
 	
 	-- foreach clip
 	for i,clip in ipairs(clips) do
+		-- find the right rule
 		for j,rule in ipairs(rules) do
-			print (clip .. " vs " .. rule.pattern)
-			capture = string.match(clip, rule.pattern)
-			if capture then
-				print ("match : " .. capture)
+			capture = { string.match(clip, rule.pattern) }
+			if #capture > 0 then
+				-- If found: apply the rule
+				print (clip .. " vs " .. rule.pattern)
+				print ("match : ", capture[1], capture[2])
+				-- TODO This code will build a table of inigo options
+				break
 			end
 		end
 	end
-	-- find the right rule
-	
-	-- If found: apply the rule
-	
-	-- If not, just ignore the file
-	
 end
-
-
