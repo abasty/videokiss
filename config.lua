@@ -24,7 +24,7 @@
 home_dir = os.getenv("HOME")
 
 -- several paths relative to home directory
-clips_dir = home_dir .. "/Desktop"
+clips_dir = home_dir .. "/Documents/SVN/dev/autoprod/src/sample"
 themes_dir = home_dir .. "/Desktop"
 movie_dir = home_dir .. "/Desktop"
 

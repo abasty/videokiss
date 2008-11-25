@@ -44,7 +44,7 @@ char* getConfigString(const char* name)
 	lua_getglobal(globals.L, name);
 	string = luaL_checkstring(globals.L, -1);
 	if (string)
-		string = strdup(string);
+		string = g_strdup(string);
 	lua_pop(globals.L, 1);
 
 	return (char*) string;
@@ -56,7 +56,7 @@ char* getConfigFieldString(const char* name)
 
 	lua_getfield(globals.L, -1, name);
 	if (!lua_isnil(globals.L, -1))
-		string = strdup(luaL_checkstring(globals.L, -1));
+		string = g_strdup(luaL_checkstring(globals.L, -1));
 	lua_pop(globals.L, 1);
 	return string;
 }
@@ -150,15 +150,17 @@ void on_cmbFormat_changed(GtkComboBox *widget, gpointer user_data)
 
 void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 {
-	int argc = 2;
-	char* argv[] = {
-		"inigo",
-		"/home/alain/Desktop/Documents/SVN/dev/autoprod/xvid.avi",
-		NULL
-	};
-		
-	// TODO: run in another thread.
-	inigo(argc, argv);
+	GtkWidget* w;
+	gchar* clips;
+	
+	w = glade_xml_get_widget(globals.xml, "fcClips");
+	clips = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(w));
+	if (g_str_has_prefix(clips, "file://"))
+	{
+		// TODO spawn a thread and popup a modal progress
+		montage(clips + 7, NULL, NULL, NULL, NULL);
+ 	}
+ 	g_free(clips);
 }
 
 int main(int argc, char *argv[])
