@@ -13,6 +13,8 @@
 #ifndef AUTPROD_H
 #define AUTPROD_H
 
+#include <glade/glade.h>
+
 #include "lua.h"
 #include "lauxlib.h"
 #include "lualib.h"
@@ -21,6 +23,29 @@
 #  define luaL_dobuffer(L, s, sz) \
     (luaL_loadbuffer(L, (const char*)s, sz, (const char*)s) || lua_pcall(L, 0, LUA_MULTRET, 0))
 # endif
+
+#define MAX_FORMATS_COUNT	32
+
+typedef struct
+{
+	char* consumer;
+	char* codecs;
+} TypeFormat;
+
+
+typedef struct
+{
+	GladeXML *xml;
+	lua_State *L;
+
+	char* home_dir;
+	
+	TypeFormat formats[MAX_FORMATS_COUNT];
+	int formats_count;
+
+} TypeGlobals;
+
+extern TypeGlobals globals;
 
 // run inigo producer
 int inigo(int argc, char **argv);

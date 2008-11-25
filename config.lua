@@ -72,5 +72,18 @@ rules = {
 }
 
 -- TODO
+-- Add code to create ~/.autoprod and to store the default settings (directories, formats, sizes, rules) ?
+
+-- TODO
 -- Add code to load the theme (a file with a "rules" var definition), to browse the file list and to apply rules
 -- This code will build a table of inigo options
+
+function montage(clips, theme)
+	if theme then
+		print ("theme =", theme)
+		dofile(theme)
+	end
+	print ("#clips = ", #clips)
+end
+
+

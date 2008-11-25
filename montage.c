@@ -11,9 +11,10 @@
 */
 
 #include <stdlib.h>
-// #include <string.h>
 #include <glib.h>
 #include <ftw.h>
+
+#include "autoprod.h"
 
 GPtrArray* files;
 
@@ -29,13 +30,10 @@ gint callbackSort(gconstpointer a, gconstpointer b)
  	return g_ascii_strcasecmp(*(const gchar **) a, *(const gchar **) b);
 }
 
-void callbackFiles(gpointer data, gpointer user_data)
-{
-	g_print("%s\n", (const gchar*) data);
-}
-
 int montage(char* clips, char* theme, char* format, char* size, char* outFile)
 {
+	guint i;
+	
 	int argc = 2;
 	char* argv[] = {
 		"inigo",
@@ -50,12 +48,33 @@ int montage(char* clips, char* theme, char* format, char* size, char* outFile)
 	// sort the list
 	g_ptr_array_sort(files, callbackSort);
 	
-	// parse the sorted array of files
-	g_ptr_array_foreach(files, callbackFiles, NULL);
 	
-	// Create a lua table and call the Lua montage function with the table and the theme as params
+	// get the lua montage function
+	lua_getglobal(globals.L, "montage");
+	
+	// Create a lua table
+	lua_createtable(globals.L, files->len, 0);
+	
+	// parse the sorted array of files and add them to the lua table
+	for (i = 0; i < files->len; i++)
+	{
+		lua_pushinteger(globals.L, i);
+		lua_pushstring(globals.L, (char*) g_ptr_array_index(files, i));		// string are copied by lua
+		lua_settable(globals.L, -3); 
+	}
+	
+	// add theme
+	lua_pushstring(globals.L, theme);
+	
+	// call the Lua montage function with the table and the theme as params
+	lua_call(globals.L, 2, 1);
+	
+	// free files
+	 g_ptr_array_free(files, TRUE);
 	
 	// The Lua function loaded the theme and returned a table of inigo strings
+	// TODO do something smart with the result
+	lua_pop(globals.L, 1);
 	
 	// format the inigo consumer string with
 	
@@ -69,7 +88,5 @@ int montage(char* clips, char* theme, char* format, char* size, char* outFile)
 	
 	// pop inigo strings 
 	
-	// free files
-	 g_ptr_array_free(files, TRUE);
 }
 

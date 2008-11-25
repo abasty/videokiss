@@ -15,27 +15,9 @@ extern char _binary_config_lua_end;
 extern char _binary_autoprod_glade_start;
 extern char _binary_autoprod_glade_end;
 
-#define MAX_FORMATS_COUNT	32
-
 typedef void (CallbackGetConfigListItem)(GtkWidget* widget);
 
-typedef struct
-{
-	char* consumer;
-	char* codecs;
-} TypeFormat;
-
-struct
-{
-	GladeXML *xml;
-	lua_State *L;
-
-	char* home_dir;
-	
-	TypeFormat formats[MAX_FORMATS_COUNT];
-	int formats_count;
-
-} globals;
+TypeGlobals globals;
 
 char* getConfigString(const char* name)
 {
