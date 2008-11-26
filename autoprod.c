@@ -78,7 +78,7 @@ void getConfigList(const char* name, CallbackGetConfigListItem* itemCallback, Gt
 		(*itemCallback)(widget);
 		lua_pop(globals.L, 1);
 	}
-	lua_pop(globals.L, 1);
+	lua_pop(globals.L, 2);
 }
 
 void getConfig(void)

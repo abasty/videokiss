@@ -50,7 +50,7 @@ sizes = {
 rules = {
 	{ 
 		-- Data file
-		pattern = "(%d+) %-%- (.*)%.(.*)", 
+		pattern = "(%d+) %-%- (.*)%.mpg", 
 		value = {
 			"\"$0\"",
 			"-mix 25 -mixer luma -mixer mix:-1"
@@ -61,12 +61,12 @@ rules = {
 		-- Title 
 		pattern = "(%d+) %-%- (.*)", 
 		value = {
-			"colour:black out=24",
-			"colour:black out=99",
-			"-attach watermark:+\"$2.txt\" composite.progressive=1 producer.align=centre composite.valign=c composite.halign=c",
-			"-mix 25 -mixer luma",
-			"colour:black out=25",
-			"-mix 25 -mixer luma"
+			"colour:black", "out=24",
+			"colour:black", "out=99",
+			"-attach",  "watermark:+\"$2.txt\"", "composite.progressive=1", "producer.align=centre", "composite.valign=c", "composite.halign=c",
+			"-mix", "25", "-mixer", "luma",
+			"colour:black", "out=25",
+			"-mix", "25", "-mixer", "luma"
 		}
 	},
 }
@@ -74,13 +74,23 @@ rules = {
 -- TODO
 -- Add code to create ~/.autoprod and to store the default settings (directories, formats, sizes, rules) ?
 
+function runRule(clip, rule, args)
+	for i,command in ipairs(rule.value) do
+		local line = string.gsub(command, "%$0", clip)
+		line = string.gsub(line, "%$(%d)", function (s) return args[0 + s] end)
+		line = line .. " \\\\"
+		table.insert(inigo, line)
+	end
+end
+
 function montage(clips, theme)
 	-- load the theme (a file with a "rules" var definition)
 	if theme then
 		print ("theme =", theme)
 		dofile(theme)
 	end
-	print ("#clips = ", #clips)
+	
+	inigo = { }
 	
 	-- foreach clip
 	for i,clip in ipairs(clips) do
@@ -89,11 +99,11 @@ function montage(clips, theme)
 			capture = { string.match(clip, rule.pattern) }
 			if #capture > 0 then
 				-- If found: apply the rule
-				print (clip .. " vs " .. rule.pattern)
-				print ("match : ", capture[1], capture[2])
-				-- TODO This code will build a table of inigo options
+				runRule(clip, rule, capture)
 				break
 			end
 		end
 	end
+	
+	return inigo
 end
