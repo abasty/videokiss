@@ -31,11 +31,12 @@ movie_dir = home_dir .. "/Desktop"
 -- Output formats
 formats = {
 	{
-		name = "Ecran (SDL)"
+		name = "Ecran (SDL)",
+		consumer = "sdl",
 	},
 	{
 		name = "XVid Basse Qualité",
-		consumer = "avformat:$clips.avi real_time=0 size=$size",
+		consumer = "avformat:$clips.avi real_time=0",
 		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=64000 frequency=32000 vcodec=xvid progressive=1",
 	},
 }
@@ -53,7 +54,7 @@ rules = {
 		pattern = "(%d+) %-%- (.*)%.mpg", 
 		value = {
 			"\"$0\"",
-			"-mix 25 -mixer luma -mixer mix:-1"
+			"-mix", "25", "-mixer", "luma", "-mixer", "mix:-1"
 		}
 	},
 

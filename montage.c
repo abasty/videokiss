@@ -62,19 +62,17 @@ void stackDump(lua_State *L)
 	printf("\n");     /* end the listing */
 }
 
-int montage(char* clips, char* theme, char* format, char* size, char* outFile)
+int montage(char* clips, char* theme, char* format, int width, int height, char* outFile)
 {
 	int status = 0;
 	guint i;
+	guint len_consumer;
+	guint len_inigo;
 	gchar* consumer = NULL;
+	gchar** consumer_split = NULL;
 
-	int argc = 2;
-	char* argv[] =
-	{
-		"inigo",
-		"/home/alain/Desktop/Documents/SVN/dev/autoprod/xvid.avi",
-		NULL
-	};
+	int argc;
+	char** argv;
 
 	// Get file listing from directory "clips"
 	files = g_ptr_array_new();
@@ -115,9 +113,19 @@ int montage(char* clips, char* theme, char* format, char* size, char* outFile)
 	}
 	
 	// format the inigo consumer string with
-	consumer = g_strdup_printf("-consumer size=%s", size);
-
-	// allocate a argv array and add the consumer and the inigo strings
+	consumer = g_strdup_printf("-consumer %s width=%d height=%d", format, width, height);
+	consumer_split = g_strsplit(consumer, " ", 0);
+	
+	// allocate argv
+	len_consumer = g_strv_length(consumer_split);
+	len_inigo = (guint) lua_objlen(globals.L, 1);
+	argc = len_consumer + len_inigo + 1;
+	argv = (char**) g_malloc(sizeof(char*) * argc);
+	
+	// add consumer_split to argv
+	
+	
+	// add montage table to argv
 /*	lua_pushinteger(globals.L, 1);
 	lua_gettable(globals.L, 1);
 	g_print("==> %s\n", luaL_checkstring(globals.L, -1));
@@ -133,8 +141,14 @@ int montage(char* clips, char* theme, char* format, char* size, char* outFile)
 	// pop inigo strings
 
 finalize:
+	// remove lua result
 	lua_pop(globals.L, 1);
+	
+	// free consumer
 	g_free(consumer);
+	
+	// free consumer split
+	g_strfreev(consumer_split);
 	
 	return status;
 }

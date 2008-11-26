@@ -51,6 +51,6 @@ extern TypeGlobals globals;
 int inigo(int argc, char **argv);
 
 // prepare arguments for the inigo producer
-int montage(char* clips, char* theme, char* format, char* size, char* outFile);
+int montage(char* clips, char* theme, char* format, int width, int height, char* outFile);
 
 #endif //AUTPROD_H

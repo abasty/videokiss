@@ -140,7 +140,7 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 	if (g_str_has_prefix(clips, "file://"))
 	{
 		// TODO spawn a thread and popup a modal progress
-		montage(clips + 7, NULL, NULL, NULL, NULL);
+		montage(clips + 7, NULL, NULL, 400, 200, NULL);
  	}
  	g_free(clips);
 }
