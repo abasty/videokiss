@@ -72,7 +72,8 @@ int montage(char* clips, char* theme, char* format, int width, int height, char*
 	gchar** consumer_split = NULL;
 
 	int argc;
-	char** argv;
+	char** argv = NULL;
+	char** argvp;
 
 	// Get file listing from directory "clips"
 	files = g_ptr_array_new();
@@ -120,25 +121,36 @@ int montage(char* clips, char* theme, char* format, int width, int height, char*
 	len_consumer = g_strv_length(consumer_split);
 	len_inigo = (guint) lua_objlen(globals.L, 1);
 	argc = len_consumer + len_inigo + 1;
-	argv = (char**) g_malloc(sizeof(char*) * argc);
+	argvp = argv = (char**) g_malloc(sizeof(char*) * (argc +  1));
+	
+	// add first (unused) arg to argv
+	*argvp++ = g_strdup("./autoprod");
 	
 	// add consumer_split to argv
-	
-	
+	for (i = 0; i < len_consumer; i++)
+		*argvp++ = g_strdup(consumer_split[i]);
+		
 	// add montage table to argv
-/*	lua_pushinteger(globals.L, 1);
-	lua_gettable(globals.L, 1);
-	g_print("==> %s\n", luaL_checkstring(globals.L, -1));
-	lua_pop(globals.L, 1);*/
+	for (i = 0; i < len_inigo; i++)
+	{
+		lua_pushinteger(globals.L, i + 1);
+		lua_gettable(globals.L, 1);
+		*argvp++ = g_strdup(luaL_checkstring(globals.L, -1));
+		lua_pop(globals.L, 1);
+	}
 	
+	// add NULL to argv
+	*argvp++ = NULL;
+	
+//   	for (argvp = argv; *argvp; argvp++)
+//   		g_print("%s ", *argvp);
+// 	g_print("\n");
 
-	// call inigo
-
-// 	inigo(argc, argv);
-
-	// free argv
-
-	// pop inigo strings
+ 	if (fork() == 0)
+ 	{
+ 		execv(globals.cmdline, argv);
+ 		exit(1);
+ 	}
 
 finalize:
 	// remove lua result
@@ -149,6 +161,9 @@ finalize:
 	
 	// free consumer split
 	g_strfreev(consumer_split);
+	
+	// free inigo args
+  	g_strfreev(argv);
 	
 	return status;
 }

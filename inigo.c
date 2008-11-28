@@ -25,10 +25,6 @@
 
 #include <framework/mlt.h>
 
-#ifdef __DARWIN__
-#include <SDL.h>
-#endif
-
 static void transport_action(mlt_producer producer, char *value)
 {
 	mlt_properties properties = MLT_PRODUCER_PROPERTIES(producer);
@@ -163,39 +159,12 @@ static mlt_consumer create_consumer(char *id, mlt_producer producer)
 	if (consumer != NULL)
 	{
 		mlt_properties properties = MLT_CONSUMER_PROPERTIES(consumer);
-		mlt_properties_set_data(properties, "transport_callback", transport_action, 0, NULL, NULL);
+ 		mlt_properties_set_data(properties, "transport_callback", transport_action, 0, NULL, NULL);
 		mlt_properties_set_data(properties, "transport_producer", producer, 0, NULL, NULL);
 		mlt_properties_set_data(MLT_PRODUCER_PROPERTIES(producer), "transport_consumer", consumer, 0, NULL, NULL);
 	}
 	return consumer;
 }
-
-#ifdef __DARWIN__
-
-static void event_handling(mlt_producer producer, mlt_consumer consumer)
-{
-	SDL_Event event;
-
-	while (SDL_PollEvent(&event))
-	{
-		switch (event.type)
-		{
-			case SDL_QUIT:
-				mlt_properties_set_int(MLT_PRODUCER_PROPERTIES(consumer), "done", 1);
-				break;
-
-			case SDL_KEYDOWN:
-				if (event.key.keysym.unicode < 0x80 && event.key.keysym.unicode > 0)
-				{
-					char keyboard[ 2 ] = { event.key.keysym.unicode, 0 };
-					transport_action(producer, keyboard);
-				}
-				break;
-		}
-	}
-}
-
-#endif
 
 static void transport(mlt_producer producer, mlt_consumer consumer)
 {
@@ -209,9 +178,6 @@ static void transport(mlt_producer producer, mlt_consumer consumer)
 	{
 		while (mlt_properties_get_int(properties, "done") == 0 && !mlt_consumer_is_stopped(consumer))
 		{
-#ifdef __DARWIN__
-			event_handling(producer, consumer);
-#endif
 			nanosleep(&tm, NULL);
 		}
 	}
@@ -222,34 +188,26 @@ int inigo(int argc, char **argv)
 	int i;
 	mlt_consumer consumer = NULL;
 	mlt_producer inigo = NULL;
-	FILE *store = NULL;
-	char *name = NULL;
 	struct sched_param scp;
+	
+//	char** argvp;
+// 	for (argvp = argv; *argvp; argvp++)
+// 		g_print(".%s. ", *argvp);
+// 	g_print("\nargc = %d\n", argc);
 
 	// Use realtime scheduling if possible
 	memset(&scp, '\0', sizeof(scp));
 	scp.sched_priority = sched_get_priority_max(SCHED_FIFO) - 1;
-#ifndef __DARWIN__
 	sched_setscheduler(0, SCHED_FIFO, &scp);
-#endif
 
 	// Construct the factory
 	mlt_factory_init(NULL);
 
-	// Check for serialisation switch first
-	for (i = 1; i < argc; i ++)
-	{
-		if (!strcmp(argv[ i ], "-serialise"))
-		{
-			name = argv[ ++ i ];
-			if (strstr(name, ".inigo"))
-				store = fopen(name, "w");
-		}
-	}
-
 	// Get inigo producer
 	if (argc > 1)
+	{
 		inigo = mlt_factory_producer("inigo", &argv[ 1 ]);
+	}
 
 	if (argc > 1 && inigo != NULL && mlt_producer_get_length(inigo) > 0)
 	{
@@ -268,34 +226,13 @@ int inigo(int argc, char **argv)
 				while (argv[ i + 1 ] != NULL && strstr(argv[ i + 1 ], "="))
 					mlt_properties_parse(group, argv[ ++ i ]);
 			}
-			else
-				if (!strcmp(argv[ i ], "-serialise"))
-				{
-					i ++;
-				}
-				else
-				{
-					if (store != NULL)
-						fprintf(store, "%s\n", argv[ i ]);
-
-					i ++;
-
-					while (argv[ i ] != NULL && argv[ i ][ 0 ] != '-')
-					{
-						if (store != NULL)
-							fprintf(store, "%s\n", argv[ i ]);
-						i += 1;
-					}
-
-					i --;
-				}
 		}
 
 		// If we have no consumer, default to sdl
-		if (store == NULL && consumer == NULL)
+		if (consumer == NULL)
 			consumer = create_consumer(NULL, inigo);
 
-		if (consumer != NULL && store == NULL)
+		if (consumer != NULL)
 		{
 			// Apply group settings
 			mlt_properties properties = MLT_CONSUMER_PROPERTIES(consumer);
@@ -308,32 +245,11 @@ int inigo(int argc, char **argv)
 			mlt_consumer_start(consumer);
 
 			// Transport functionality
- 			transport(inigo, consumer);
+			transport(inigo, consumer);
 
 			// Stop the consumer
 			mlt_consumer_stop(consumer);
 		}
-		else
-			if (store != NULL)
-			{
-				fprintf(stderr, "Project saved as %s.\n", name);
-				fclose(store);
-			}
-	}
-	else
-	{
-		fprintf(stderr, "Usage: inigo [ -group [ name=value ]* ]\n"
-		        "             [ -consumer id[:arg] [ name=value ]* ]\n"
-		        "             [ -filter filter[:arg] [ name=value ] * ]\n"
-		        "             [ -attach filter[:arg] [ name=value ] * ]\n"
-		        "             [ -mix length [ -mixer transition ]* ]\n"
-		        "             [ -transition id[:arg] [ name=value ] * ]\n"
-		        "             [ -blank frames ]\n"
-		        "             [ -track ]\n"
-		        "             [ -split relative-frame ]\n"
-		        "             [ -join clips ]\n"
-		        "             [ -repeat times ]\n"
-		        "             [ producer [ name=value ] * ]+\n");
 	}
 
 	// Close the consumer

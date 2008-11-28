@@ -42,6 +42,8 @@ typedef struct
 	
 	TypeFormat formats[MAX_FORMATS_COUNT];
 	int formats_count;
+	
+	char* cmdline;
 
 } TypeGlobals;
 

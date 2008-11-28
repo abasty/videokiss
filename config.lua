@@ -53,7 +53,7 @@ rules = {
 		-- Data file
 		pattern = "(%d+) %-%- (.*)%.mpg", 
 		value = {
-			"\"$0\"",
+			"$0",
 			"-mix", "25", "-mixer", "luma", "-mixer", "mix:-1"
 		}
 	},
@@ -64,7 +64,7 @@ rules = {
 		value = {
 			"colour:black", "out=24",
 			"colour:black", "out=99",
-			"-attach",  "watermark:+\"$2.txt\"", "composite.progressive=1", "producer.align=centre", "composite.valign=c", "composite.halign=c",
+			"-attach", "watermark:+$2.txt", "composite.progressive=1", "producer.align=centre", "composite.valign=c", "composite.halign=c",
 			"-mix", "25", "-mixer", "luma",
 			"colour:black", "out=25",
 			"-mix", "25", "-mixer", "luma"
@@ -79,7 +79,6 @@ function runRule(clip, rule, args)
 	for i,command in ipairs(rule.value) do
 		local line = string.gsub(command, "%$0", clip)
 		line = string.gsub(line, "%$(%d)", function (s) return args[0 + s] end)
-		line = line .. " \\\\"
 		table.insert(inigo, line)
 	end
 end

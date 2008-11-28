@@ -139,14 +139,21 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 	clips = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(w));
 	if (g_str_has_prefix(clips, "file://"))
 	{
-		// TODO spawn a thread and popup a modal progress
-		montage(clips + 7, NULL, NULL, 400, 200, NULL);
+		montage(clips + 7, NULL, "sdl", 360, 288, NULL);
+		montage(clips + 7, NULL, "sdl", 720, 576, NULL);
  	}
  	g_free(clips);
 }
 
 int main(int argc, char *argv[])
 {
+	// relaunch in inigo mode	
+	if (argc > 1)
+		return 	inigo(argc, argv);
+
+	// normal launch
+	globals.cmdline = argv[0];
+	
 	// init gtk
 	gtk_init(&argc, &argv);
 
