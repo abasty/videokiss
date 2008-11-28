@@ -63,7 +63,7 @@ void stackDump(lua_State *L)
 	printf("\n");     /* end the listing */
 }
 
-int montage(char* clips, char* theme, char* format, int width, int height, char* outFile)
+int montage(char* clips, char* theme, char* format, int width, int height)
 {
 	int status = 0;
 	guint i;
@@ -125,7 +125,7 @@ int montage(char* clips, char* theme, char* format, int width, int height, char*
 	argvp = argv = (char**) g_malloc(sizeof(char*) * (argc +  1));
 	
 	// add first (unused) arg to argv
-	*argvp++ = g_strdup("./autoprod");
+	*argvp++ = g_strdup("autoprod");
 	
 	// add consumer_split to argv
 	for (i = 0; i < len_consumer; i++)
@@ -168,4 +168,3 @@ finalize:
 	
 	return status;
 }
-

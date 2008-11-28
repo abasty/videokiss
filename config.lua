@@ -44,7 +44,8 @@ formats = {
 -- Output sizes
 sizes = {
 	"720x576",
-	"360x288"
+	"360x288",
+	"160x120"
 }
 
 -- rules

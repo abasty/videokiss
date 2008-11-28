@@ -139,15 +139,17 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 	clips = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(w));
 	if (g_str_has_prefix(clips, "file://"))
 	{
-		gchar* size;
+		gchar* string;
 		int width, height;
 		char* end;
+		gint integer;
 		
+		// get size from UI
 		w = glade_xml_get_widget(globals.xml, "cmbSize");
-		size = gtk_combo_box_get_active_text(GTK_COMBO_BOX(w));
-		if (size)
+		string = gtk_combo_box_get_active_text(GTK_COMBO_BOX(w));
+		if (string)
 		{
-			width = strtoull((char*) size, &end, 10);
+			width = strtoull((char*) string, &end, 10);
 			if (end && *end)
 				height = strtoull(end + 1, NULL, 10);
 		}
@@ -155,9 +157,32 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 			width = 720;
 		if (height == 0)
 			height = 576;
-	 	g_free(size);
+	 	g_free(string);
+
+#if 0	 	
+	 	// get theme from UI
+	 	
+	 	// get format = consumer from lua(+ outFile) + codecs from UI 
+ 		w = glade_xml_get_widget(globals.xml, "cmbFormat");
+		integer = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
+ 		if (integer >= 0)
+ 		{
+ 			// get consumer from lua
+			lua_getglobal(globals.L, "formats");
+			lua_pushinteger(globals.L, integer + 1);
+			lua_gettable(globals.L, -2);				// get the format table on the stack
+			if (lua_istable(globals.L, -1))
+			{
+			}
+			lua_pop(globals.L, 2);		// remove "formats" and the format item
+ 			
+ 		}
+ 		
+	 	
+	 	// get output file if any = folder + name from UI
+#endif
 		
-		montage(clips + 7, NULL, "sdl", width, height, NULL);
+		montage(clips + 7, NULL, "sdl", width, height);
  	}
  	g_free(clips);
 }
