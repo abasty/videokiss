@@ -20,7 +20,8 @@ GPtrArray* files;
 
 int callbackFtw(const char *fpath, const struct stat *sb, int typeflag)
 {
-	g_ptr_array_add(files, g_strdup(fpath));
+	if (fpath[0] != '.' && g_strstr_len(fpath, -1, "/.") == NULL)
+		g_ptr_array_add(files, g_strdup(fpath));
 	return 0;
 }
 

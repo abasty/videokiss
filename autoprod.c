@@ -139,8 +139,25 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 	clips = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(w));
 	if (g_str_has_prefix(clips, "file://"))
 	{
-		montage(clips + 7, NULL, "sdl", 360, 288, NULL);
-		montage(clips + 7, NULL, "sdl", 720, 576, NULL);
+		gchar* size;
+		int width, height;
+		char* end;
+		
+		w = glade_xml_get_widget(globals.xml, "cmbSize");
+		size = gtk_combo_box_get_active_text(GTK_COMBO_BOX(w));
+		if (size)
+		{
+			width = strtoull((char*) size, &end, 10);
+			if (end && *end)
+				height = strtoull(end + 1, NULL, 10);
+		}
+		if (width == 0)
+			width = 720;
+		if (height == 0)
+			height = 576;
+	 	g_free(size);
+		
+		montage(clips + 7, NULL, "sdl", width, height, NULL);
  	}
  	g_free(clips);
 }
