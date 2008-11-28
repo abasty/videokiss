@@ -25,6 +25,8 @@ home_dir = os.getenv("HOME")
 
 -- several paths relative to home directory
 clips_dir = home_dir .. "/Documents/SVN/dev/autoprod/src/sample"
+
+clips_dir = "/home/alain/Desktop/Documents/SVN/dev/autoprod/Rushes/2007-08 -- Vacances Pyrénées"
 themes_dir = home_dir .. "/Desktop"
 movie_dir = home_dir .. "/Desktop"
 
@@ -52,7 +54,7 @@ sizes = {
 rules = {
 	{ 
 		-- Data file
-		pattern = "(%d+) %-%- (.*)%.mpg", 
+		pattern = "(.*) %-%- .*%.mpg", 
 		value = {
 			"$0",
 			"-mix", "25", "-mixer", "luma", "-mixer", "mix:-1"
@@ -61,7 +63,7 @@ rules = {
 
 	{
 		-- Title 
-		pattern = "(%d+) %-%- (.*)", 
+		pattern = "(.*) %-%- (.*)", 
 		value = {
 			"colour:black", "out=24",
 			"colour:black", "out=99",

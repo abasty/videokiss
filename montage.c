@@ -78,6 +78,7 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 
 	// Get file listing from directory "clips"
 	files = g_ptr_array_new();
+	g_ptr_array_add(files, clips);
 	ftw(clips, callbackFtw, 10);
 
 	// sort the list

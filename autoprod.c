@@ -136,8 +136,8 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 	gchar* clips;
 	
 	w = glade_xml_get_widget(globals.xml, "fcClips");
-	clips = gtk_file_chooser_get_uri(GTK_FILE_CHOOSER(w));
-	if (g_str_has_prefix(clips, "file://"))
+	clips = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(w));
+	if (clips && *clips)
 	{
 		gchar* string;
 		int width, height;
@@ -182,7 +182,7 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 	 	// get output file if any = folder + name from UI
 #endif
 		
-		montage(clips + 7, NULL, "sdl", width, height);
+		montage(clips, NULL, "sdl", width, height);
  	}
  	g_free(clips);
 }
