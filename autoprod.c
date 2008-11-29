@@ -43,6 +43,21 @@ char* getConfigFieldString(const char* name)
 	return string;
 }
 
+char* getConfigFormatString(guint formatIndex, const char* name)
+{
+	char* string = NULL;
+
+	// get consumer from lua
+	lua_getglobal(globals.L, "formats");
+	lua_pushinteger(globals.L, formatIndex);
+	lua_gettable(globals.L, -2);				// get the format table on the stack
+	if (lua_istable(globals.L, -1))
+		string = getConfigFieldString(name);
+	lua_pop(globals.L, 2);		// remove "formats" and the format item
+	
+	return string;
+}
+
 void callbackGetConfigListSizeItem(GtkWidget* widget)
 {
 	const char* string;
@@ -124,10 +139,42 @@ void getConfig(void)
 
 }
 
+void setDefaultFilename(void)
+{
+	guint index = gtk_combo_box_get_active(GTK_COMBO_BOX(glade_xml_get_widget(globals.xml, "cmbFormat"))) + 1;
+	gchar* ext = getConfigFormatString(index, "ext");
+	if (ext)
+	{
+		gchar* basename = g_path_get_basename(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcClips"))));
+		gchar* filename = g_strconcat(basename, ".", ext, NULL);
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entOut")), filename);
+		g_free(basename);
+		g_free(filename);
+	}
+	g_free(ext);
+}
+
 void on_cmbFormat_changed(GtkComboBox *widget, gpointer user_data)
 {
-	gboolean visible = gtk_combo_box_get_active(GTK_COMBO_BOX(widget)) > 0;
-	gtk_widget_set(glade_xml_get_widget(globals.xml, "vbxFormat"), "visible", visible);
+	guint index = gtk_combo_box_get_active(GTK_COMBO_BOX(widget));
+	
+	// make format box visible or not
+	gtk_widget_set(glade_xml_get_widget(globals.xml, "vbxFormat"), "visible", index > 0);
+	
+	// get codecs string and set it it in format entry
+	gchar* codecs = getConfigFormatString(index + 1, "codecs");
+	if (codecs)
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entFormat")), codecs);
+	else
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entFormat")), "");
+	g_free(codecs);
+	
+	setDefaultFilename();
+}
+
+void on_fcClips_file_set(GtkFileChooserButton *widget, gpointer user_data)
+{
+	setDefaultFilename();
 }
 
 void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
@@ -142,7 +189,7 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 		gchar* string;
 		int width, height;
 		char* end;
-		gint integer;
+		gint index;
 		
 		// get size from UI
 		w = glade_xml_get_widget(globals.xml, "cmbSize");
@@ -159,36 +206,20 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 			height = 576;
 	 	g_free(string);
 
-#if 0	 	
 	 	// get theme from UI
 	 	
 	 	// get format = consumer from lua(+ outFile) + codecs from UI 
  		w = glade_xml_get_widget(globals.xml, "cmbFormat");
-		integer = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
- 		if (integer >= 0)
+		index = gtk_combo_box_get_active(GTK_COMBO_BOX(w)) + 1;
+ 		if (index >= 1)
  		{
- 			// get consumer from lua
-			lua_getglobal(globals.L, "formats");
-			lua_pushinteger(globals.L, integer + 1);
-			lua_gettable(globals.L, -2);				// get the format table on the stack
-			if (lua_istable(globals.L, -1))
-			{
-				// get the consumer
-				lua_pushstring(globals.L, "consumer");
-				lua_gettable(globals.L, -2);
-				if (lua_isstring(globals.L, -1))
-				{
-					
-				}
-				lua_pop(globals.L, 1);	// pop consumer
-			}
-			lua_pop(globals.L, 2);		// remove "formats" and the format item
- 			
+ 			// get consumer
+ 			string = getConfigFormatString(index, "consumer");
+ 			// 
+		 	g_free(string);
  		}
- 		
-	 	
+ 	
 	 	// get output file if any = folder + name from UI
-#endif
 		
 		montage(clips, NULL, "sdl", width, height);
  	}

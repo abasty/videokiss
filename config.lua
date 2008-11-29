@@ -38,8 +38,9 @@ formats = {
 	},
 	{
 		name = "XVid Basse Qualité",
-		consumer = "avformat:$clips.avi real_time=0",
+		consumer = "avformat:$file real_time=0",
 		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=64000 frequency=32000 vcodec=xvid progressive=1",
+		ext = "avi"
 	},
 }
 
