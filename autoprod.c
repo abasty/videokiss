@@ -173,6 +173,14 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 			lua_gettable(globals.L, -2);				// get the format table on the stack
 			if (lua_istable(globals.L, -1))
 			{
+				// get the consumer
+				lua_pushstring(globals.L, "consumer");
+				lua_gettable(globals.L, -2);
+				if (lua_isstring(globals.L, -1))
+				{
+					
+				}
+				lua_pop(globals.L, 1);	// pop consumer
 			}
 			lua_pop(globals.L, 2);		// remove "formats" and the format item
  			
