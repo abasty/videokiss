@@ -178,7 +178,8 @@ void on_fcClips_file_set(GtkFileChooserButton *widget, gpointer user_data)
 void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 {
 	GtkWidget* w;
-	gchar* clips;
+	gchar* clips = NULL;
+	gchar* consumer = NULL;
 	
 	w = glade_xml_get_widget(globals.xml, "fcClips");
 	clips = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(w));
@@ -213,15 +214,42 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
  		{
  			// get consumer
  			string = getConfigFormatString(index, "consumer");
- 			// 
+ 			
+ 			// replace $file in consumer string to the out directory/file
+ 			gchar* file = g_strstr_len(string, -1, "$file");
+ 			if (file)
+ 			{
+ 				*file = 0;
+				
+ 				gchar* newString = g_strconcat(
+ 					string,
+ 					gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcOut"))),
+ 					"/",
+ 					gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entOut"))),
+ 					file + 5,
+ 					NULL
+ 				);
+ 				
+			 	g_free(string);
+			 	string = newString;
+ 			}
+ 			
+ 			// concat out format
+ 			consumer = g_strconcat(
+ 				string, 
+ 				" ", 
+ 				gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entFormat"))),
+ 				NULL
+ 			);
+ 			
 		 	g_free(string);
  		}
  	
 	 	// get output file if any = folder + name from UI
-		
-		montage(clips, NULL, "sdl", width, height);
+		montage(clips, NULL, consumer, width, height);
  	}
  	g_free(clips);
+	g_free(consumer);
 }
 
 int main(int argc, char *argv[])

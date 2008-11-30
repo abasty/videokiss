@@ -26,7 +26,7 @@ home_dir = os.getenv("HOME")
 -- several paths relative to home directory
 clips_dir = home_dir .. "/Documents/SVN/dev/autoprod/src/sample"
 
-clips_dir = "/home/alain/Desktop/Documents/SVN/dev/autoprod/Rushes/2007-08 -- Vacances Pyrénées"
+clips_dir = "/home/alain/Desktop/Documents/SVN/dev/autoprod/Rushes/Essai"
 themes_dir = home_dir .. "/Desktop"
 movie_dir = home_dir .. "/Desktop"
 
@@ -35,13 +35,34 @@ formats = {
 	{
 		name = "Ecran (SDL)",
 		consumer = "sdl",
+		codecs = "profile=dv_pal"
 	},
 	{
 		name = "XVid Basse Qualité",
-		consumer = "avformat:$file real_time=0",
-		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=64000 frequency=32000 vcodec=xvid progressive=1",
+		consumer = "'avformat:$file' real_time=0",
+		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=128000 frequency=48000 vcodec=xvid acodec=mp2 progressive=1";
 		ext = "avi"
 	},
+	{
+		name = "XVid Moyenne Qualité",
+		consumer = "'avformat:$file' real_time=0",
+		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=5000000 audio_bit_rate=128000 frequency=48000 vcodec=xvid acodec=mp2 progressive=1";
+		ext = "avi"
+	},
+	{
+		name = "XVid Haute Qualité",
+		consumer = "'avformat:$file' real_time=0",
+		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=7000000 audio_bit_rate=128000 frequency=48000 vcodec=xvid acodec=mp2 progressive=1";
+		ext = "avi"
+	},
+	{
+		name = "DV Haute Qualité",
+		consumer = "'avformat:$file' real_time=0",
+		codecs = "format=avi vcodec=dvvideo ildct=1 pix_fmt=yuv420p acodec=pcm_s16le profile=dv_pal",
+		ext = "avi"
+	},
+	
+	
 }
 
 -- Output sizes
