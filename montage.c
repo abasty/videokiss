@@ -71,6 +71,7 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	guint len_inigo;
 	gchar* consumer = NULL;
 	gchar** consumer_split = NULL;
+	guint consumer_splitc;
 
 	int argc;
 	char** argv = NULL;
@@ -117,7 +118,11 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	
 	// format the inigo consumer string with
 	consumer = g_strdup_printf("-consumer %s width=%d height=%d", format, width, height);
-	consumer_split = g_strsplit(consumer, " ", 0);
+	if (!g_shell_parse_argv(consumer, &consumer_splitc, &consumer_split, NULL))
+	{
+		status = 2;
+		goto finalize;
+	}
 	
 	// allocate argv
 	len_consumer = g_strv_length(consumer_split);

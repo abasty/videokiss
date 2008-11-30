@@ -159,14 +159,12 @@ void on_cmbFormat_changed(GtkComboBox *widget, gpointer user_data)
 	guint index = gtk_combo_box_get_active(GTK_COMBO_BOX(widget));
 	
 	// make format box visible or not
-	gtk_widget_set(glade_xml_get_widget(globals.xml, "vbxFormat"), "visible", index > 0);
+	gtk_widget_set_sensitive(glade_xml_get_widget(globals.xml, "expFormat"), index > 0);
 	
 	// get codecs string and set it it in format entry
 	gchar* codecs = getConfigFormatString(index + 1, "codecs");
-	if (codecs)
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entFormat")), codecs);
-	else
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entFormat")), "");
+	gchar* formatCodecs = codecs ? codecs : "";
+	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entFormat")), formatCodecs);
 	g_free(codecs);
 	
 	setDefaultFilename();
@@ -240,7 +238,6 @@ int main(int argc, char *argv[])
 
 	// load glade buffer
 	globals.xml = glade_xml_new_from_buffer(&_binary_autoprod_glade_start, &_binary_autoprod_glade_end - &_binary_autoprod_glade_start, NULL, NULL);
-	
 	glade_xml_signal_autoconnect(globals.xml);
 
 	// create Lua state
