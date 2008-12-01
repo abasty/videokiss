@@ -1,14 +1,21 @@
 /*
-*  C Implementation: montage
-*
-* Description:
-*
-*
-* Author: Alain Basty <alain.basty@free.fr>, (C) 2008
-*
-* Copyright: See COPYING file that comes with this distribution
-*
-*/
+ * montage.c -- Autoprod file
+ * Copyright (C) 2008 Alain Basty
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 #include <stdlib.h>
 #include <glib.h>
@@ -41,7 +48,7 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	guint len_inigo;
 	gchar* consumer = NULL;
 	gchar** consumer_split = NULL;
-	guint consumer_splitc;
+	gint consumer_splitc;
 
 	int argc;
 	char** argv = NULL;
@@ -59,7 +66,7 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	lua_getglobal(globals.L, "montage");
 
 	// Create a lua table
-	lua_createtable(globals.L, files->len, 0);
+	lua_createtable(globals.L, (int) files->len, 0);
 
 	// parse the sorted array of files and add them to the lua table
 	for (i = 0; i < files->len; i++)
@@ -76,7 +83,7 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	lua_call(globals.L, 2, 1);
 
 	// free files
-	g_ptr_array_free(files, TRUE);
+	(void) g_ptr_array_free(files, TRUE);
 
 	// The Lua function loaded the theme and returned a table of inigo strings
 	if (lua_type(globals.L, 1) != LUA_TTABLE)
@@ -96,7 +103,7 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	// allocate argv
 	len_consumer = g_strv_length(consumer_split);
 	len_inigo = (guint) lua_objlen(globals.L, 1);
-	argc = len_consumer + len_inigo + 1;
+	argc = (int) (len_consumer + len_inigo + 1);
 	argvp = argv = (char**) g_malloc(sizeof(char*) * (argc +  1));
 	
 	// add first (unused) arg to argv

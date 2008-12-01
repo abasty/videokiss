@@ -1,3 +1,22 @@
+/*
+ * autoprod.c -- Main Autoprod file
+ * Copyright (C) 2008 Alain Basty
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -81,7 +100,7 @@ void callbackGetConfigListFormatItem(GtkWidget* widget)
 
 void getConfigList(const char* name, CallbackGetConfigListItem* itemCallback, GtkWidget* widget)
 {
-	int index;
+	lua_Integer index;
 
 	lua_getglobal(globals.L, name);
 	for (index = 1; TRUE ; index++)
@@ -109,21 +128,21 @@ void getConfig(void)
 	if (g_file_test(clips_dir, G_FILE_TEST_IS_DIR))
 	{
 		widget = glade_xml_get_widget(globals.xml, "fcClips");
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), clips_dir);
+		(void) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), clips_dir);
 	}
 
 	themes_dir = getConfigString("themes_dir");
 	if (g_file_test(themes_dir, G_FILE_TEST_IS_DIR))
 	{
 		widget = glade_xml_get_widget(globals.xml, "fcTheme");
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), themes_dir);
+		(void) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), themes_dir);
 	}
 
 	movie_dir = getConfigString("movie_dir");
 	if (g_file_test(movie_dir, G_FILE_TEST_IS_DIR))
 	{
 		widget = glade_xml_get_widget(globals.xml, "fcOut");
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), movie_dir);
+		(void) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), movie_dir);
 	}
 
 	widget = glade_xml_get_widget(globals.xml, "cmbSize");
@@ -141,35 +160,42 @@ void getConfig(void)
 
 void setDefaultFilename(void)
 {
-	guint index = gtk_combo_box_get_active(GTK_COMBO_BOX(glade_xml_get_widget(globals.xml, "cmbFormat"))) + 1;
-	gchar* ext = getConfigFormatString(index, "ext");
-	if (ext)
+	gint index = gtk_combo_box_get_active(GTK_COMBO_BOX(glade_xml_get_widget(globals.xml, "cmbFormat"))) + 1;
+	if (index >= 0)
 	{
-		gchar* basename = g_path_get_basename(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcClips"))));
-		gchar* filename = g_strconcat(basename, ".", ext, NULL);
-		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entOut")), filename);
-		g_free(basename);
-		g_free(filename);
+		gchar* ext = getConfigFormatString((guint) index, "ext");
+		if (ext)
+		{
+			gchar* basename = g_path_get_basename(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcClips"))));
+			gchar* filename = g_strconcat(basename, ".", ext, NULL);
+			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entOut")), filename);
+			g_free(basename);
+			g_free(filename);
+		}
+		g_free(ext);
 	}
-	g_free(ext);
 }
 
 void on_cmbFormat_changed(GtkComboBox *widget, gpointer user_data)
 {
-	guint index = gtk_combo_box_get_active(GTK_COMBO_BOX(widget));
-	gchar* codecs;
-	gchar* formatCodecs;
+	gint index = gtk_combo_box_get_active(GTK_COMBO_BOX(widget));
 	
-	// make format box visible or not
-	gtk_widget_set_sensitive(glade_xml_get_widget(globals.xml, "expFormat"), index > 0);
-	
-	// get codecs string and set it it in format entry
-	codecs = getConfigFormatString(index + 1, "codecs");
-	formatCodecs = codecs ? codecs : "";
-	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entFormat")), formatCodecs);
-	g_free(codecs);
-	
-	setDefaultFilename();
+	if (index >= 0)
+	{
+		gchar* codecs;
+		gchar* formatCodecs;
+		
+		// make format box visible or not
+		gtk_widget_set_sensitive(glade_xml_get_widget(globals.xml, "expFormat"), index > 0);
+		
+		// get codecs string and set it it in format entry
+		codecs = getConfigFormatString((guint) index + 1, "codecs");
+		formatCodecs = codecs ? codecs : "";
+		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entFormat")), formatCodecs);
+		g_free(codecs);
+		
+		setDefaultFilename();
+	}
 }
 
 void on_fcClips_file_set(GtkFileChooserButton *widget, gpointer user_data)
@@ -216,7 +242,7 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
  		{
  			gchar* file;
  			// get consumer
- 			string = getConfigFormatString(index, "consumer");
+ 			string = getConfigFormatString((guint) index, "consumer");
  			
  			// replace $file in consumer string to the out directory/file
  			file = g_strstr_len(string, -1, "$file");
@@ -282,7 +308,7 @@ int main(int argc, char *argv[])
 	luaL_openlibs(globals.L);
 
 	// run inlined config script
-	luaL_dobuffer(globals.L, &_binary_config_lua_start, &_binary_config_lua_end - &_binary_config_lua_start);
+	luaL_dobuffer(globals.L, &_binary_config_lua_start, (size_t) (&_binary_config_lua_end - &_binary_config_lua_start));
 
 	// get config from Lua
 	getConfig();

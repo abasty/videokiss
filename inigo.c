@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sched.h>
+#include <time.h>
 
 #include <framework/mlt.h>
 
@@ -160,7 +161,7 @@ static mlt_consumer create_consumer(char *id, mlt_producer producer)
 	if (consumer != NULL)
 	{
 		mlt_properties properties = MLT_CONSUMER_PROPERTIES(consumer);
- 		mlt_properties_set_data(properties, "transport_callback", transport_action, 0, NULL, NULL);
+ 		mlt_properties_set_data(properties, "transport_callback", (void*) transport_action, 0, NULL, NULL);
 		mlt_properties_set_data(properties, "transport_producer", producer, 0, NULL, NULL);
 		mlt_properties_set_data(MLT_PRODUCER_PROPERTIES(producer), "transport_consumer", consumer, 0, NULL, NULL);
 	}
