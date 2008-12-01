@@ -152,10 +152,11 @@ static void transport_action(mlt_producer producer, char *value)
 
 static mlt_consumer create_consumer(char *id, mlt_producer producer)
 {
+	mlt_consumer consumer;
 	char *arg = id != NULL ? strchr(id, ':') : NULL;
 	if (arg != NULL)
 		*arg ++ = '\0';
-	mlt_consumer consumer = mlt_factory_consumer(id, arg);
+	consumer = mlt_factory_consumer(id, arg);
 	if (consumer != NULL)
 	{
 		mlt_properties properties = MLT_CONSUMER_PROPERTIES(consumer);
@@ -190,11 +191,6 @@ int inigo(int argc, char **argv)
 	mlt_producer inigo = NULL;
 	struct sched_param scp;
 	
-//	char** argvp;
-// 	for (argvp = argv; *argvp; argvp++)
-// 		g_print(".%s. ", *argvp);
-// 	g_print("\nargc = %d\n", argc);
-
 	// Use realtime scheduling if possible
 	memset(&scp, '\0', sizeof(scp));
 	scp.sched_priority = sched_get_priority_max(SCHED_FIFO) - 1;

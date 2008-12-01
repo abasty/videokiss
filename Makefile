@@ -8,3 +8,6 @@ release :
 
 clean :
 	rm -rf build	
+
+splint :
+	splint +posixlib `pkg-config --cflags glib-2.0 --cflags gtk+-2.0 --cflags mlt-framework libglade-2.0` -I./lua/include -weak *.c

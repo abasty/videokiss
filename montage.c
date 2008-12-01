@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <glib.h>
 #include <ftw.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "autoprod.h"
 
@@ -29,38 +31,6 @@ gint callbackSort(gconstpointer a, gconstpointer b)
 {
 	// the sort array callback receives pointers to array elements. Array elements are pointer to char
 	return g_ascii_strcasecmp(* (const gchar **) a, * (const gchar **) b);
-}
-
-void stackDump(lua_State *L)
-{
-	int i;
-	int top = lua_gettop(L);
-	for (i = 1; i <= top; i++)    /* repeat for each level */
-	{
-		int t = lua_type(L, i);
-		switch (t)
-		{
-
-			case LUA_TSTRING:  /* strings */
-				printf("'%s'", lua_tostring(L, i));
-				break;
-
-			case LUA_TBOOLEAN:  /* booleans */
-				printf(lua_toboolean(L, i) ? "true" : "false");
-				break;
-
-			case LUA_TNUMBER:  /* numbers */
-				printf("%g", lua_tonumber(L, i));
-				break;
-
-			default:  /* other values */
-				printf("%s", lua_typename(L, t));
-				break;
-
-		}
-		printf("   ");     /* put a separator */
-	}
-	printf("\n");     /* end the listing */
 }
 
 int montage(char* clips, char* theme, char* format, int width, int height)
@@ -109,7 +79,6 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	g_ptr_array_free(files, TRUE);
 
 	// The Lua function loaded the theme and returned a table of inigo strings
-	// TODO do something smart with the result
 	if (lua_type(globals.L, 1) != LUA_TTABLE)
 	{
 		status = 1;
@@ -149,10 +118,6 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	// add NULL to argv
 	*argvp++ = NULL;
 	
-//   	for (argvp = argv; *argvp; argvp++)
-//   		g_print("%s ", *argvp);
-// 	g_print("\n");
-
  	if (fork() == 0)
  	{
  		execv(globals.cmdline, argv);

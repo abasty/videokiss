@@ -157,13 +157,15 @@ void setDefaultFilename(void)
 void on_cmbFormat_changed(GtkComboBox *widget, gpointer user_data)
 {
 	guint index = gtk_combo_box_get_active(GTK_COMBO_BOX(widget));
+	gchar* codecs;
+	gchar* formatCodecs;
 	
 	// make format box visible or not
 	gtk_widget_set_sensitive(glade_xml_get_widget(globals.xml, "expFormat"), index > 0);
 	
 	// get codecs string and set it it in format entry
-	gchar* codecs = getConfigFormatString(index + 1, "codecs");
-	gchar* formatCodecs = codecs ? codecs : "";
+	codecs = getConfigFormatString(index + 1, "codecs");
+	formatCodecs = codecs ? codecs : "";
 	gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entFormat")), formatCodecs);
 	g_free(codecs);
 	
@@ -212,16 +214,18 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 		index = gtk_combo_box_get_active(GTK_COMBO_BOX(w)) + 1;
  		if (index >= 1)
  		{
+ 			gchar* file;
  			// get consumer
  			string = getConfigFormatString(index, "consumer");
  			
  			// replace $file in consumer string to the out directory/file
- 			gchar* file = g_strstr_len(string, -1, "$file");
+ 			file = g_strstr_len(string, -1, "$file");
  			if (file)
  			{
+ 				gchar* newString;
+ 				
  				*file = 0;
-				
- 				gchar* newString = g_strconcat(
+ 				newString = g_strconcat(
  					string,
  					gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcOut"))),
  					"/",
