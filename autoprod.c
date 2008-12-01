@@ -34,7 +34,7 @@ extern char _binary_config_lua_end;
 extern char _binary_autoprod_glade_start;
 extern char _binary_autoprod_glade_end;
 
-typedef void (CallbackGetConfigListItem)(GtkWidget* widget);
+typedef void (*CallbackGetConfigListItem)(GtkWidget* widget);
 
 TypeGlobals globals;
 
@@ -98,7 +98,7 @@ void callbackGetConfigListFormatItem(GtkWidget* widget)
 	free(string);
 }
 
-void getConfigList(const char* name, CallbackGetConfigListItem* itemCallback, GtkWidget* widget)
+void getConfigList(const char* name, CallbackGetConfigListItem itemCallback, GtkWidget* widget)
 {
 	lua_Integer index;
 
