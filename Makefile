@@ -11,5 +11,4 @@ clean :
 	rm *.icon 2>/dev/null
 
 splint :
-	splint +unixlib `pkg-config --cflags glib-2.0 gtk+-2.0 mlt-framework libglade-2.0` -I./lua/include -weak *.c
-
+	splint +unixlib -unrecog `pkg-config --cflags glib-2.0 gtk+-2.0 mlt-framework libglade-2.0` -I./lua/include -weak *.c

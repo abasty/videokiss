@@ -236,7 +236,7 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 			height = 576;
 	 	g_free(string);
 
-	 	// get theme from UI
+	 	// TODO get theme from UI
 	 	
 	 	// get format = consumer from lua(+ outFile) + codecs from UI 
  		w = glade_xml_get_widget(globals.xml, "cmbFormat");
@@ -281,6 +281,7 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 	 	// get output file if any = folder + name from UI
 		montage(clips, NULL, consumer, width, height);
  	}
+
  	g_free(clips);
 	g_free(consumer);
 }

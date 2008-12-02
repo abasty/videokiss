@@ -92,7 +92,7 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 		goto finalize;
 	}
 	
-	// format the inigo consumer string with
+	// format the inigo consumer string
 	consumer = g_strdup_printf("-consumer %s width=%d height=%d", format, width, height);
 	if (!g_shell_parse_argv(consumer, &consumer_splitc, &consumer_split, NULL))
 	{
