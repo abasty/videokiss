@@ -26,6 +26,9 @@
 
 #include "autoprod.h"
 
+#include "autoprod.icon"
+
+
 // linked lua config file
 extern char _binary_config_lua_start;
 extern char _binary_config_lua_end;
@@ -284,6 +287,8 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 
 int main(int argc, char *argv[])
 {
+	GtkWindow* wndMain;
+	
 	// relaunch in inigo mode	
 	if (argc > 1)
 		return 	inigo(argc, argv);
@@ -297,6 +302,9 @@ int main(int argc, char *argv[])
 	// load glade buffer
 	globals.xml = glade_xml_new_from_buffer(&_binary_autoprod_glade_start, &_binary_autoprod_glade_end - &_binary_autoprod_glade_start, NULL, NULL);
 	glade_xml_signal_autoconnect(globals.xml);
+
+	wndMain = GTK_WINDOW(glade_xml_get_widget(globals.xml, "wndMain"));
+  	gtk_window_set_icon(wndMain,  gdk_pixbuf_new_from_inline(-1, autoprod_icon, FALSE, NULL));
 
 	// create Lua state
 	globals.L = lua_open();

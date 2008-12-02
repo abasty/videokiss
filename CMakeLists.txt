@@ -37,6 +37,15 @@ ADD_CUSTOM_COMMAND(
 	COMMENT "Objectifying ${AUTOPROD_GLADE}..."
 )
 
+SET(AUTOPROD_ICON "video-x-generic.png")
+
+ADD_CUSTOM_COMMAND(
+	OUTPUT  ${AUTOPROD_SOURCE_DIR}/autoprod.icon
+	COMMAND gdk-pixbuf-csource --raw --name=autoprod_icon ${AUTOPROD_SOURCE_DIR}/${AUTOPROD_ICON} >${AUTOPROD_SOURCE_DIR}/autoprod.icon
+	DEPENDS ${AUTOPROD_ICON}
+	COMMENT "Objectifying ${AUTOPROD_ICON}..."
+)
+
 ADD_EXECUTABLE(
 	# exe
 	autoprod
@@ -52,6 +61,9 @@ ADD_EXECUTABLE(
 	# objects
 	${AUTOPROD_BINARY_DIR}/${CONFIG_LUA}.o
 	${AUTOPROD_BINARY_DIR}/${AUTOPROD_GLADE}.o
+	
+	# app icon
+	autoprod.icon
 )
 
 ADD_DEFINITIONS(-DLUA_USE_LINUX)
