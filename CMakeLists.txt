@@ -58,13 +58,15 @@ ADD_EXECUTABLE(
 	# headers
 	autoprod.h
 	
-	# objects
+	# embedded objects(lua script, glade file)
 	${AUTOPROD_BINARY_DIR}/${CONFIG_LUA}.o
 	${AUTOPROD_BINARY_DIR}/${AUTOPROD_GLADE}.o
 	
 	# app icon
 	autoprod.icon
 )
+
+SET_TARGET_PROPERTIES(autoprod PROPERTIES COMPILE_FLAGS "-Wall")
 
 ADD_DEFINITIONS(-DLUA_USE_LINUX)
 

@@ -317,7 +317,7 @@ int main(int argc, char *argv[])
 	luaL_openlibs(globals.L);
 
 	// run inlined config script
-	luaL_dobuffer(globals.L, &_binary_config_lua_start, (size_t) (&_binary_config_lua_end - &_binary_config_lua_start));
+	(void) luaL_dobuffer(globals.L, &_binary_config_lua_start, (size_t) (&_binary_config_lua_end - &_binary_config_lua_start));
 
 	// get config from Lua
 	getConfig();
