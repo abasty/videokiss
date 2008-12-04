@@ -364,7 +364,6 @@ int main(int argc, char *argv[])
 	if (init)
 	{
 		gchar* dir = g_strconcat(globals.home_dir, "/.autoprod", NULL);
-		g_print("%s\n", dir);
 		mkdir(dir, 0700);
 		g_free(dir);
 	}
