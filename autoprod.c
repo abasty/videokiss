@@ -211,7 +211,7 @@ void setDefaultFilename(void)
 	}
 }
 
-void on_cmbFormat_changed(GtkComboBox *widget, gpointer user_data)
+void on_cmbFormat_changed(GtkWidget *widget, gpointer user_data)
 {
 	gint index = gtk_combo_box_get_active(GTK_COMBO_BOX(widget));
 	
@@ -233,12 +233,12 @@ void on_cmbFormat_changed(GtkComboBox *widget, gpointer user_data)
 	}
 }
 
-void on_fcClips_file_set(GtkFileChooserButton *widget, gpointer user_data)
+void on_fcClips_file_set(GtkWidget *widget, gpointer user_data)
 {
 	setDefaultFilename();
 }
 
-void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
+void on_btnMontage_clicked(GtkWidget *widget, gpointer user_data)
 {
 	GtkWidget* w;
 	gchar* clips = NULL;
@@ -318,6 +318,13 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 	g_free(consumer);
 }
 
+void on_wndMain_destroy(GtkWidget *widget, gpointer user_data)
+{
+	// save current config
+	saveConfig();
+	gtk_main_quit();
+}
+
 int main(int argc, char *argv[])
 {
 	GtkWindow* wndMain;
@@ -338,9 +345,6 @@ int main(int argc, char *argv[])
 	// load glade buffer
 	globals.xml = glade_xml_new_from_buffer(&_binary_autoprod_glade_start, &_binary_autoprod_glade_end - &_binary_autoprod_glade_start, NULL, NULL);
 	glade_xml_signal_autoconnect(globals.xml);
-
-	wndMain = GTK_WINDOW(glade_xml_get_widget(globals.xml, "wndMain"));
-  	gtk_window_set_icon(wndMain,  gdk_pixbuf_new_from_inline(-1, autoprod_icon, FALSE, NULL));
 
 	// create Lua state
 	globals.L = lua_open();
@@ -368,15 +372,17 @@ int main(int argc, char *argv[])
 		g_free(dir);
 	}
 	
-	// get config from Lua
+	// get config from Lua and update window
 	getConfig();
 
+	// last window updates and show all
+	wndMain = GTK_WINDOW(glade_xml_get_widget(globals.xml, "wndMain"));
+  	gtk_window_set_icon(wndMain,  gdk_pixbuf_new_from_inline(-1, autoprod_icon, FALSE, NULL));
+	gtk_widget_show_all(GTK_WIDGET(wndMain));
+	
 	// run
 	gtk_main();
 	
-	// save current config
-	saveConfig();
-
 	// finalize
 	lua_close(globals.L);
 
