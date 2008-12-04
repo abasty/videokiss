@@ -19,6 +19,9 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
 
 #include <glib.h>
 #include <gtk/gtk.h>
@@ -125,8 +128,6 @@ void getConfig(void)
 	char* themes_dir;
 	char* movie_dir;
 
-	globals.home_dir = getConfigString("home_dir");
-
 	clips_dir = getConfigString("clips_dir");
 	if (g_file_test(clips_dir, G_FILE_TEST_IS_DIR))
 	{
@@ -161,6 +162,37 @@ void getConfig(void)
 
 }
 
+void saveConfig(void)
+{
+	FILE* file;
+	GtkWidget* w;
+	gchar* string;
+	gchar* filename;
+	
+	filename = g_strconcat(globals.home_dir, "/.autoprod/default.lua", NULL);
+	if (!filename)
+		return;
+		
+	file = fopen(filename, "w");
+	if (file)
+	{	
+		w = glade_xml_get_widget(globals.xml, "fcClips");
+		string = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(w));
+		fprintf(file, "clips_dir = \"%s\"\n", string);
+		g_free(string);
+		
+		// TODO do the same with theme dir
+		w = glade_xml_get_widget(globals.xml, "fcOut");
+		string = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(w));
+		fprintf(file, "movie_dir = \"%s\"\n", string);
+		g_free(string);	
+		
+		fclose(file);
+	}
+	
+	g_free(filename);
+}
+
 void setDefaultFilename(void)
 {
 	gint index = gtk_combo_box_get_active(GTK_COMBO_BOX(glade_xml_get_widget(globals.xml, "cmbFormat"))) + 1;
@@ -169,7 +201,7 @@ void setDefaultFilename(void)
 		gchar* ext = getConfigFormatString((guint) index, "ext");
 		if (ext)
 		{
-			gchar* basename = g_path_get_basename(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcClips"))));
+			gchar* basename = g_path_get_basename(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcClips")))); // TODO memory leak
 			gchar* filename = g_strconcat(basename, ".", ext, NULL);
 			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entOut")), filename);
 			g_free(basename);
@@ -256,7 +288,7 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
  				*file = 0;
  				newString = g_strconcat(
  					string,
- 					gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcOut"))),
+ 					gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcOut"))), // TODO memory leak
  					"/",
  					gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entOut"))),
  					file + 5,
@@ -289,7 +321,10 @@ void on_btnMontage_clicked(GtkComboBox *widget, gpointer user_data)
 int main(int argc, char *argv[])
 {
 	GtkWindow* wndMain;
+	int init;
 	
+	globals.home_dir = g_get_home_dir();
+
 	// relaunch in inigo mode	
 	if (argc > 1)
 		return 	inigo(argc, argv);
@@ -318,12 +353,30 @@ int main(int argc, char *argv[])
 
 	// run inlined config script
 	(void) luaL_dobuffer(globals.L, &_binary_config_lua_start, (size_t) (&_binary_config_lua_end - &_binary_config_lua_start));
-
+	
+	// call init lua function
+	lua_getglobal(globals.L, "init");
+	lua_call(globals.L, 0, 1);
+	init = luaL_checkint(globals.L, -1);
+	lua_pop(globals.L, 1);
+	
+	// create config directory if needed
+	if (init)
+	{
+		gchar* dir = g_strconcat(globals.home_dir, "/.autoprod", NULL);
+		g_print("%s\n", dir);
+		mkdir(dir, 0700);
+		g_free(dir);
+	}
+	
 	// get config from Lua
 	getConfig();
 
 	// run
 	gtk_main();
+	
+	// save current config
+	saveConfig();
 
 	// finalize
 	lua_close(globals.L);

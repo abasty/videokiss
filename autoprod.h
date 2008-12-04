@@ -45,7 +45,7 @@ typedef struct
 	GladeXML *xml;
 	lua_State *L;
 
-	char* home_dir;
+	const char* home_dir;
 	
 	TypeFormat formats[MAX_FORMATS_COUNT];
 	int formats_count;

@@ -97,9 +97,6 @@ rules = {
 	},
 }
 
--- TODO
--- Add code to create ~/.autoprod and to store the default settings (directories, formats, sizes, rules) ?
-
 function runRule(clip, rule, args)
 	for i,command in ipairs(rule.value) do
 		local line = string.gsub(command, "%$0", clip)
@@ -131,4 +128,15 @@ function montage(clips, theme)
 	end
 	
 	return inigo
+end
+
+function init()
+	local file = home_dir .. "/.autoprod/default.lua"
+	local d = io.open(file, "r")
+	if d then
+		io.close(d)
+		dofile(file)
+		return 0
+	end
+	return 1
 end
