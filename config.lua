@@ -70,19 +70,32 @@ sizes = {
 	"180x144"
 }
 
--- rules
+-- Movie making rules
+
+clip_rule = {
+	"$0",
+	"-mix", "25", "-mixer", "luma", "-mixer", "mix:-1"
+}
+
 rules = {
+	-- Movie files
 	{ 
-		-- Data file
-		pattern = "(.*) %-%- .*%.mpg", 
-		value = {
-			"$0",
-			"-mix", "25", "-mixer", "luma", "-mixer", "mix:-1"
-		}
+		pattern = "%.mpg$",
+		value = clip_rule
 	},
 
+	{ 
+		pattern = "%.wmv$", 
+		value = clip_rule
+	},
+
+	{ 
+		pattern = "%.avi$", 
+		value = clip_rule
+	},
+
+	-- Title files
 	{
-		-- Title 
 		pattern = "(.*) %-%- (.*)", 
 		value = {
 			"colour:black", "out=24",

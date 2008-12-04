@@ -19,9 +19,11 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <fcntl.h>
+#include <sys/signal.h>
+#include <sys/wait.h>
 
 #include <glib.h>
 #include <gtk/gtk.h>
@@ -43,6 +45,12 @@ extern char _binary_autoprod_glade_end;
 typedef void (*CallbackGetConfigListItem)(GtkWidget* widget);
 
 TypeGlobals globals;
+
+void on_SIGCHLD(int sig)
+{
+    signal(SIGCHLD, on_SIGCHLD);
+    while (wait3(NULL, WNOHANG, NULL) > 0);
+}
 
 char* getConfigString(const char* name)
 {
@@ -329,6 +337,9 @@ int main(int argc, char *argv[])
 {
 	GtkWindow* wndMain;
 	int init;
+	
+	// avoid zombies
+	signal(SIGCHLD, on_SIGCHLD);
 	
 	globals.home_dir = g_get_home_dir();
 
