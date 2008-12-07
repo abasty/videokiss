@@ -36,21 +36,21 @@ formats = {
 		codecs = "profile=dv_pal"
 	},
 	{
-		name = "XVid Basse Qualité",
+		name = "FFmpeg MPEG-4 3MBits",
 		consumer = "'avformat:$file' real_time=0",
-		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=128000 frequency=48000 vcodec=xvid acodec=mp2 progressive=1";
+ 		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi"
 	},
 	{
-		name = "XVid Moyenne Qualité",
+		name = "FFmpeg MPEG-4 5MBits",
 		consumer = "'avformat:$file' real_time=0",
-		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=5000000 audio_bit_rate=128000 frequency=48000 vcodec=xvid acodec=mp2 progressive=1";
+		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=5000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi"
 	},
 	{
-		name = "XVid Haute Qualité",
+		name = "FFmpeg MPEG-4 7MBits",
 		consumer = "'avformat:$file' real_time=0",
-		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=7000000 audio_bit_rate=128000 frequency=48000 vcodec=xvid acodec=mp2 progressive=1";
+		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=7000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi"
 	},
 	{
