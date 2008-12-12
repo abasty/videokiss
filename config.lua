@@ -25,7 +25,7 @@ home_dir = os.getenv("HOME")
 
 -- several paths relative to home directory
 clips_dir = home_dir .. "/Desktop"
-themes_dir = home_dir .. "/Desktop"
+theme_file = home_dir .. "/Desktop"
 movie_dir = home_dir .. "/Desktop"
 
 -- Output formats
@@ -97,7 +97,7 @@ rules = {
 
 	-- Title files
 	{
-		pattern = "(.*) %-%- (.*)", 
+		pattern = "([^/]*) %-%- ([^/]*)$", 
 		value = {
 			"colour:black", "out=24",
 			"colour:black", "out=99",
@@ -120,7 +120,6 @@ end
 function montage(clips, theme)
 	-- load the theme (a file with a "rules" var definition)
 	if theme then
-		print ("theme =", theme)
 		dofile(theme)
 	end
 	

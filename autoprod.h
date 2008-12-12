@@ -39,6 +39,7 @@
 
 #define STR_LUA_ERROR _("Lua script error. Check theme or config.")
 #define STR_LUA_ERROR_TITLE _("Error")
+#define STR_LUA_FILTER_NAME _("Themes")
 
 typedef struct
 {

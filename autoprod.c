@@ -132,8 +132,9 @@ void getConfigList(const char* name, CallbackGetConfigListItem itemCallback, Gtk
 void getConfig(void)
 {
 	GtkWidget* widget;
+	GtkFileFilter *filter;
 	char* clips_dir;
-	char* themes_dir;
+	char* theme_file;
 	char* movie_dir;
 
 	clips_dir = getConfigString("clips_dir");
@@ -143,17 +144,19 @@ void getConfig(void)
 		(void) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), clips_dir);
 	}
 
-	themes_dir = getConfigString("themes_dir");
-	if (g_file_test(themes_dir, G_FILE_TEST_IS_DIR))
+	widget = glade_xml_get_widget(globals.xml, "fcTheme");
+	filter = gtk_file_filter_new();
+	if (filter)
 	{
-		GtkFileFilter *filter = gtk_file_filter_new();
-		if (filter)
-		{
-			gtk_file_filter_add_pattern (filter, "*.lua");
-		}
-		widget = glade_xml_get_widget(globals.xml, "fcTheme");
-		(void) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), themes_dir);
+		gtk_file_filter_add_pattern(filter, "*.lua");
+		gtk_file_filter_set_name(filter, STR_LUA_FILTER_NAME);
 		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(widget), filter);
+	}
+	
+	theme_file = getConfigString("theme_file");
+	if (g_file_test(theme_file, G_FILE_TEST_IS_REGULAR))
+	{
+		(void) gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(widget), theme_file);
 	}
 
 	movie_dir = getConfigString("movie_dir");
@@ -195,10 +198,14 @@ void saveConfig(void)
 		fprintf(file, "clips_dir = \"%s\"\n", string);
 		g_free(string);
 		
-		// TODO do the same with theme dir
 		w = glade_xml_get_widget(globals.xml, "fcOut");
 		string = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(w));
 		fprintf(file, "movie_dir = \"%s\"\n", string);
+		g_free(string);	
+		
+		w = glade_xml_get_widget(globals.xml, "fcTheme");
+		string = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(w));
+		fprintf(file, "theme_file = \"%s\"\n", string);
 		g_free(string);	
 		
 		fclose(file);
@@ -331,6 +338,8 @@ void on_btnMontage_clicked(GtkWidget *widget, gpointer user_data)
 	 	
 	 	// get output file if any = folder + name from UI
 		montage(clips, theme, consumer, width, height);
+		
+	 	g_free(theme);
  	}
 
  	g_free(clips);
