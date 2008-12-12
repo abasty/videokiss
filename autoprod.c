@@ -146,8 +146,14 @@ void getConfig(void)
 	themes_dir = getConfigString("themes_dir");
 	if (g_file_test(themes_dir, G_FILE_TEST_IS_DIR))
 	{
+		GtkFileFilter *filter = gtk_file_filter_new();
+		if (filter)
+		{
+			gtk_file_filter_add_pattern (filter, "*.lua");
+		}
 		widget = glade_xml_get_widget(globals.xml, "fcTheme");
 		(void) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(widget), themes_dir);
+		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(widget), filter);
 	}
 
 	movie_dir = getConfigString("movie_dir");
@@ -167,7 +173,7 @@ void getConfig(void)
 	gtk_combo_box_remove_text(GTK_COMBO_BOX(widget), 0);
 	getConfigList("formats", callbackGetConfigListFormatItem, widget);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(widget), 0);
-
+	
 }
 
 void saveConfig(void)
@@ -260,6 +266,7 @@ void on_btnMontage_clicked(GtkWidget *widget, gpointer user_data)
 		int width, height;
 		char* end;
 		gint index;
+		gchar* theme = NULL;
 		
 		// get size from UI
 		w = glade_xml_get_widget(globals.xml, "cmbSize");
@@ -276,8 +283,6 @@ void on_btnMontage_clicked(GtkWidget *widget, gpointer user_data)
 			height = 576;
 	 	g_free(string);
 
-	 	// TODO get theme from UI
-	 	
 	 	// get format = consumer from lua(+ outFile) + codecs from UI 
  		w = glade_xml_get_widget(globals.xml, "cmbFormat");
 		index = gtk_combo_box_get_active(GTK_COMBO_BOX(w)) + 1;
@@ -292,11 +297,13 @@ void on_btnMontage_clicked(GtkWidget *widget, gpointer user_data)
  			if (file)
  			{
  				gchar* newString;
+ 				gchar* fcOut;
  				
  				*file = 0;
+ 				fcOut = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcOut")));
  				newString = g_strconcat(
  					string,
- 					gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcOut"))), // TODO memory leak
+					fcOut,
  					"/",
  					gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entOut"))),
  					file + 5,
@@ -304,6 +311,7 @@ void on_btnMontage_clicked(GtkWidget *widget, gpointer user_data)
  				);
  				
 			 	g_free(string);
+			 	g_free(fcOut);
 			 	string = newString;
  			}
  			
@@ -318,8 +326,11 @@ void on_btnMontage_clicked(GtkWidget *widget, gpointer user_data)
 		 	g_free(string);
  		}
  	
+	 	// get theme from UI
+	 	theme = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcTheme")));
+	 	
 	 	// get output file if any = folder + name from UI
-		montage(clips, NULL, consumer, width, height);
+		montage(clips, theme, consumer, width, height);
  	}
 
  	g_free(clips);
@@ -335,7 +346,6 @@ void on_wndMain_destroy(GtkWidget *widget, gpointer user_data)
 
 int main(int argc, char *argv[])
 {
-	GtkWindow* wndMain;
 	int init;
 	
 	// avoid zombies
@@ -387,9 +397,9 @@ int main(int argc, char *argv[])
 	getConfig();
 
 	// last window updates and show all
-	wndMain = GTK_WINDOW(glade_xml_get_widget(globals.xml, "wndMain"));
-  	gtk_window_set_icon(wndMain,  gdk_pixbuf_new_from_inline(-1, autoprod_icon, FALSE, NULL));
-	gtk_widget_show_all(GTK_WIDGET(wndMain));
+	globals.wndMain = GTK_WINDOW(glade_xml_get_widget(globals.xml, "wndMain"));
+  	gtk_window_set_icon(globals.wndMain,  gdk_pixbuf_new_from_inline(-1, autoprod_icon, FALSE, NULL));
+	gtk_widget_show_all(GTK_WIDGET(globals.wndMain));
 	
 	// run
 	gtk_main();

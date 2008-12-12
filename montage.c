@@ -23,6 +23,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <gtk/gtk.h>
+
 #include "autoprod.h"
 
 GPtrArray* files;
@@ -80,7 +82,13 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	lua_pushstring(globals.L, theme);
 
 	// call the Lua montage function with the table and the theme as params
-	lua_call(globals.L, 2, 1);
+	if (lua_pcall(globals.L, 2, 1, 0) != 0)
+	{
+ 		GtkWidget* dialog = gtk_message_dialog_new(globals.wndMain, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", STR_LUA_ERROR);
+ 		gtk_window_set_title(GTK_WINDOW(dialog), STR_LUA_ERROR_TITLE);
+ 		gtk_dialog_run(GTK_DIALOG(dialog));
+ 		gtk_widget_destroy(dialog);
+	}
 
 	// free files
 	(void) g_ptr_array_free(files, TRUE);

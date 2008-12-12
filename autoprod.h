@@ -20,11 +20,15 @@
 #ifndef AUTPROD_H
 #define AUTPROD_H
 
+#include <libintl.h>
+
 #include <glade/glade.h>
 
 #include "lua.h"
 #include "lauxlib.h"
 #include "lualib.h"
+
+#define _(x) gettext(x)
 
 # ifndef luaL_dobuffer
 #  define luaL_dobuffer(L, s, sz) \
@@ -32,6 +36,9 @@
 # endif
 
 #define MAX_FORMATS_COUNT	32
+
+#define STR_LUA_ERROR _("Lua script error. Check theme or config.")
+#define STR_LUA_ERROR_TITLE _("Error")
 
 typedef struct
 {
@@ -44,6 +51,8 @@ typedef struct
 {
 	GladeXML *xml;
 	lua_State *L;
+		
+	GtkWindow* wndMain;
 
 	const char* home_dir;
 	
