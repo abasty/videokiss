@@ -27,9 +27,9 @@ rules = {
 	{
 		pattern = "([^/]*) %-%- ([^/]*) %-%- ([^/]*)$", 
 		value = {
-			"colour:black", "out=74",
- 			"-attach-cut", "watermark:+$2.txt", "composite.progressive=1", "composite.valign=c", "composite.halign=c", 
-  			"-attach-cut", "watermark:+$3.txt", "producer.fgcolour=red", "composite.progressive=1", "composite.valign=bottom", "composite.halign=r", 
+			"colour:black", "out=99",
+ 			"-attach-cut", "watermark:+$2.txt", "composite.progressive=1", "producer.align=c", "producer.size=64", "composite.valign=c", "composite.halign=c", 
+  			"-attach-cut", "watermark:+$3.txt", "producer.align=r", "producer.fgcolour=red", "producer.size=40", "composite.progressive=1", "composite.valign=bottom", "composite.halign=r", 
 		},
 	},
 	{
