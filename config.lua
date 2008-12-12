@@ -66,6 +66,7 @@ formats = {
 -- Output sizes
 sizes = {
 	"720x576",
+	"720x404",
 	"360x288",
 	"180x144"
 }
