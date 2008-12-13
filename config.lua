@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
---    autoprod config file                                                  --
+--    videokiss config file                                                  --
 --                                                                          --
 --    Copyright (C) 2008 by Alain Basty                                     --
 --    alain.basty@free.fr                                                   --
@@ -170,7 +170,7 @@ function runFile(file)
 end
 
 function init()
-	local defaultExist = runFile(home_dir .. "/.autoprod/default.lua")
-	runFile(home_dir .. "/.autoprod/config.lua")
+	local defaultExist = runFile(home_dir .. "/.videokiss/default.lua")
+	runFile(home_dir .. "/.videokiss/config.lua")
 	return defaultExist
 end

@@ -27,7 +27,7 @@ ADD_CUSTOM_COMMAND(
 	COMMENT "Objectifying ${CONFIG_LUA}..."
 )
 
-SET(VIDEOKISS_GLADE "autoprod.glade")
+SET(VIDEOKISS_GLADE "videokiss.glade")
 
 ADD_CUSTOM_COMMAND(
 	OUTPUT  ${VIDEOKISS_BINARY_DIR}/${VIDEOKISS_GLADE}.o
@@ -51,12 +51,12 @@ ADD_EXECUTABLE(
 	videokiss
 
 	# sources
-	autoprod.c
+	videokiss.c
 	inigo.c
 	montage.c
 
 	# headers
-	autoprod.h
+	videokiss.h
 	
 	# embedded objects(lua script, glade file)
 	${VIDEOKISS_BINARY_DIR}/${CONFIG_LUA}.o

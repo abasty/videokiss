@@ -25,7 +25,7 @@
 
 #include <gtk/gtk.h>
 
-#include "autoprod.h"
+#include "videokiss.h"
 
 GPtrArray* files;
 

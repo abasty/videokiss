@@ -1,5 +1,5 @@
 /*
- * autoprod.c -- Main Autoprod file
+ * videokiss.c -- Main Video Kiss file
  * Copyright (C) 2008 Alain Basty
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,7 +29,7 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include "autoprod.h"
+#include "videokiss.h"
 
 #include "videokiss.icon"
 
@@ -39,8 +39,8 @@ extern char _binary_config_lua_start;
 extern char _binary_config_lua_end;
 
 // linked glade file
-extern char _binary_autoprod_glade_start;
-extern char _binary_autoprod_glade_end;
+extern char _binary_videokiss_glade_start;
+extern char _binary_videokiss_glade_end;
 
 typedef void (*CallbackGetConfigListItem)(GtkWidget* widget);
 
@@ -186,7 +186,7 @@ void saveConfig(void)
 	gchar* string;
 	gchar* filename;
 	
-	filename = g_strconcat(globals.home_dir, "/.autoprod/default.lua", NULL);
+	filename = g_strconcat(globals.home_dir, "/.videokiss/default.lua", NULL);
 	if (!filename)
 		return;
 		
@@ -373,7 +373,7 @@ int main(int argc, char *argv[])
 	gtk_init(&argc, &argv);
 
 	// load glade buffer
-	globals.xml = glade_xml_new_from_buffer(&_binary_autoprod_glade_start, &_binary_autoprod_glade_end - &_binary_autoprod_glade_start, NULL, NULL);
+	globals.xml = glade_xml_new_from_buffer(&_binary_videokiss_glade_start, &_binary_videokiss_glade_end - &_binary_videokiss_glade_start, NULL, NULL);
 	glade_xml_signal_autoconnect(globals.xml);
 
 	// create Lua state
@@ -397,7 +397,7 @@ int main(int argc, char *argv[])
 	// create config directory if needed
 	if (init)
 	{
-		gchar* dir = g_strconcat(globals.home_dir, "/.autoprod", NULL);
+		gchar* dir = g_strconcat(globals.home_dir, "/.videokiss", NULL);
 		mkdir(dir, 0700);
 		g_free(dir);
 	}
