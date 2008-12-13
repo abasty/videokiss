@@ -158,13 +158,19 @@ function montage(clips, theme)
 	return inigo
 end
 
-function init()
-	local file = home_dir .. "/.autoprod/default.lua"
+function runFile(file)
 	local d = io.open(file, "r")
 	if d then
 		io.close(d)
 		dofile(file)
 		return 0
+	else
+		return 1
 	end
-	return 1
+end
+
+function init()
+	local defaultExist = runFile(home_dir .. "/.autoprod/default.lua")
+	runFile(home_dir .. "/.autoprod/config.lua")
+	return defaultExist
 end
