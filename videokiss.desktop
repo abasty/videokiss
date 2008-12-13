@@ -1,0 +1,12 @@
+
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Exec=vk
+Icon=video
+Terminal=false
+Name=Video Kiss
+Comment=Automatic video maker
+Comment[fr]=Montage vidéo automatique
+Categories=Application;AudioVideo
+

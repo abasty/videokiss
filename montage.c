@@ -135,7 +135,7 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	
  	if (fork() == 0)
  	{
- 		execv(globals.cmdline, argv);
+ 		execvp(globals.cmdline, argv);
  		exit(1);
  	}
 
