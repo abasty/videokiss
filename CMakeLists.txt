@@ -81,3 +81,8 @@ TARGET_LINK_LIBRARIES(
 	${MLT_LIBRARIES}
 )
 
+# Default cmake "bin" directory is /usr/local/bin do we have to change that ?
+INSTALL(TARGETS videokiss DESTINATION bin CONFIGURATIONS Release)
+# This is for freedesktop (Gnome, KDE, etc.). The "video" meta-icon should exist.
+INSTALL(FILES videokiss.desktop DESTINATION /usr/share/applications CONFIGURATIONS Release)
+# We should also install some docs, like some themes and sample files (a theme directory with the default one is like... needed)
