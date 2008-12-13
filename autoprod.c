@@ -31,7 +31,7 @@
 
 #include "autoprod.h"
 
-#include "autoprod.icon"
+#include "videokiss.icon"
 
 
 // linked lua config file
@@ -407,7 +407,7 @@ int main(int argc, char *argv[])
 
 	// last window updates and show all
 	globals.wndMain = GTK_WINDOW(glade_xml_get_widget(globals.xml, "wndMain"));
-  	gtk_window_set_icon(globals.wndMain,  gdk_pixbuf_new_from_inline(-1, autoprod_icon, FALSE, NULL));
+  	gtk_window_set_icon(globals.wndMain,  gdk_pixbuf_new_from_inline(-1, videokiss_icon, FALSE, NULL));
 	gtk_widget_show_all(GTK_WIDGET(globals.wndMain));
 	
 	// run

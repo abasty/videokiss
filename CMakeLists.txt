@@ -1,4 +1,4 @@
-PROJECT(AUTOPROD)
+PROJECT(VIDEOKISS)
 
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMakeScripts)
 
@@ -7,48 +7,48 @@ FIND_PACKAGE(Glade REQUIRED)
 FIND_PACKAGE(MLT REQUIRED)
 
 INCLUDE_DIRECTORIES(
-	${AUTOPROD_SOURCE_DIR}/lua/include
+	${VIDEOKISS_SOURCE_DIR}/lua/include
 	${MLT_INCLUDE_DIRS}
 	${GTK2_INCLUDE_DIRS}
 	${GLADE_INCLUDE_DIRS}
 )
 
 LINK_DIRECTORIES(
-	${AUTOPROD_SOURCE_DIR}/lua
+	${VIDEOKISS_SOURCE_DIR}/lua
 )
 
 SET(CONFIG_LUA "config.lua")
 
 ADD_CUSTOM_COMMAND(
-	OUTPUT  ${AUTOPROD_BINARY_DIR}/${CONFIG_LUA}.o
-	COMMAND ln -sf ${AUTOPROD_SOURCE_DIR}/${CONFIG_LUA} .
+	OUTPUT  ${VIDEOKISS_BINARY_DIR}/${CONFIG_LUA}.o
+	COMMAND ln -sf ${VIDEOKISS_SOURCE_DIR}/${CONFIG_LUA} .
 	COMMAND objcopy --input binary --output elf32-i386 --binary-architecture i386 ${CONFIG_LUA} ${CONFIG_LUA}.o
 	DEPENDS ${CONFIG_LUA}
 	COMMENT "Objectifying ${CONFIG_LUA}..."
 )
 
-SET(AUTOPROD_GLADE "autoprod.glade")
+SET(VIDEOKISS_GLADE "autoprod.glade")
 
 ADD_CUSTOM_COMMAND(
-	OUTPUT  ${AUTOPROD_BINARY_DIR}/${AUTOPROD_GLADE}.o
-	COMMAND ln -sf ${AUTOPROD_SOURCE_DIR}/${AUTOPROD_GLADE} .
-	COMMAND objcopy --input binary --output elf32-i386 --binary-architecture i386 ${AUTOPROD_GLADE} ${AUTOPROD_GLADE}.o
-	DEPENDS ${AUTOPROD_GLADE}
-	COMMENT "Objectifying ${AUTOPROD_GLADE}..."
+	OUTPUT  ${VIDEOKISS_BINARY_DIR}/${VIDEOKISS_GLADE}.o
+	COMMAND ln -sf ${VIDEOKISS_SOURCE_DIR}/${VIDEOKISS_GLADE} .
+	COMMAND objcopy --input binary --output elf32-i386 --binary-architecture i386 ${VIDEOKISS_GLADE} ${VIDEOKISS_GLADE}.o
+	DEPENDS ${VIDEOKISS_GLADE}
+	COMMENT "Objectifying ${VIDEOKISS_GLADE}..."
 )
 
-SET(AUTOPROD_ICON "video-x-generic.png")
+SET(VIDEOKISS_ICON "video-x-generic.png")
 
 ADD_CUSTOM_COMMAND(
-	OUTPUT  ${AUTOPROD_SOURCE_DIR}/autoprod.icon
-	COMMAND gdk-pixbuf-csource --raw --name=autoprod_icon ${AUTOPROD_SOURCE_DIR}/${AUTOPROD_ICON} >${AUTOPROD_SOURCE_DIR}/autoprod.icon
-	DEPENDS ${AUTOPROD_ICON}
-	COMMENT "Objectifying ${AUTOPROD_ICON}..."
+	OUTPUT  ${VIDEOKISS_SOURCE_DIR}/videokiss.icon
+	COMMAND gdk-pixbuf-csource --raw --name=videokiss_icon ${VIDEOKISS_SOURCE_DIR}/${VIDEOKISS_ICON} >${VIDEOKISS_SOURCE_DIR}/videokiss.icon
+	DEPENDS ${VIDEOKISS_ICON}
+	COMMENT "Objectifying ${VIDEOKISS_ICON}..."
 )
 
 ADD_EXECUTABLE(
 	# exe
-	autoprod
+	videokiss
 
 	# sources
 	autoprod.c
@@ -59,20 +59,20 @@ ADD_EXECUTABLE(
 	autoprod.h
 	
 	# embedded objects(lua script, glade file)
-	${AUTOPROD_BINARY_DIR}/${CONFIG_LUA}.o
-	${AUTOPROD_BINARY_DIR}/${AUTOPROD_GLADE}.o
+	${VIDEOKISS_BINARY_DIR}/${CONFIG_LUA}.o
+	${VIDEOKISS_BINARY_DIR}/${VIDEOKISS_GLADE}.o
 	
 	# app icon
-	autoprod.icon
+	videokiss.icon
 )
 
-SET_TARGET_PROPERTIES(autoprod PROPERTIES COMPILE_FLAGS "-Wall")
+SET_TARGET_PROPERTIES(videokiss PROPERTIES COMPILE_FLAGS "-Wall")
 
 ADD_DEFINITIONS(-DLUA_USE_LINUX)
 
 TARGET_LINK_LIBRARIES(
 	# exe
-	autoprod
+	videokiss
 
 	# libs
 	lua
