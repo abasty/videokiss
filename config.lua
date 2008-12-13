@@ -33,36 +33,36 @@ movie_dir = home_dir .. "/Desktop"
 -- NOTE: This is not needed for the mpeg4 encoder that will preserve a video aspect ratio of 4:3 even with a size of 720:576 (1.25) 
 formats = {
 	{
-		name = "SDL (Ecran)",
+		name = "Preview",
 		consumer = "sdl",
 		codecs = "profile=dv_pal"
 	},
 	{
-		name = "XVID 3MBits (TVIX)",
+		name = "TVIX (XVID 3MBits)",
 		consumer = "'avformat:$file' real_time=0",
  		codecs = "format=avi vcodec=xvid video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi"
 	},
 	{
-		name = "FFmpeg MPEG-4 3MBits",
+		name = "PC LQ (MPEG-4 3MBits)",
 		consumer = "'avformat:$file' real_time=0",
  		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi"
 	},
 	{
-		name = "FFmpeg MPEG-4 5MBits",
+		name = "PC MQ (MPEG-4 5MBits)",
 		consumer = "'avformat:$file' real_time=0",
 		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=5000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi"
 	},
 	{
-		name = "FFmpeg MPEG-4 7MBits",
+		name = "PC HQ (MPEG-4 7MBits)",
 		consumer = "'avformat:$file' real_time=0",
 		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=7000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi"
 	},
 	{
-		name = "DV",
+		name = "Video Editing (DV)",
 		consumer = "'avformat:$file' real_time=0",
 		codecs = "format=avi vcodec=dvvideo ildct=1 pix_fmt=yuv420p acodec=pcm_s16le profile=dv_pal",
 		ext = "avi"
