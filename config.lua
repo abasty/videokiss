@@ -29,11 +29,19 @@ theme_file = home_dir .. "/Desktop"
 movie_dir = home_dir .. "/Desktop"
 
 -- Output formats
+-- NOTE: xvid codec does square pixels while mpeg4 alone respects source pixel ratio. For a 4:3 video, use widht and height with width:size = 1.33
+-- NOTE: This is not needed for the mpeg4 encoder that will preserve a video aspect ratio of 4:3 even with a size of 720:576 (1.25) 
 formats = {
 	{
-		name = "Ecran (SDL)",
+		name = "SDL (Ecran)",
 		consumer = "sdl",
 		codecs = "profile=dv_pal"
+	},
+	{
+		name = "XVID 3MBits (TVIX)",
+		consumer = "'avformat:$file' real_time=0",
+ 		codecs = "format=avi vcodec=xvid video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
+		ext = "avi"
 	},
 	{
 		name = "FFmpeg MPEG-4 3MBits",
@@ -54,7 +62,7 @@ formats = {
 		ext = "avi"
 	},
 	{
-		name = "DV Haute Qualité",
+		name = "DV",
 		consumer = "'avformat:$file' real_time=0",
 		codecs = "format=avi vcodec=dvvideo ildct=1 pix_fmt=yuv420p acodec=pcm_s16le profile=dv_pal",
 		ext = "avi"
@@ -65,10 +73,10 @@ formats = {
 
 -- Output sizes
 sizes = {
-	"720x576",
-	"720x404",
 	"360x288",
-	"180x144"
+	"720x576",
+	"480x360",
+	"640x480",
 }
 
 -- Movie making rules
@@ -95,18 +103,27 @@ rules = {
 		value = clip_rule
 	},
 
-	-- Title files
+	-- Title
+	{
+		pattern = "([^/]*) %-%- ([^/]*) %-%- ([^/]*)$", 
+		value = {
+			"colour:black", "out=99",
+ 			"-attach-cut", "watermark:+$2.txt", "composite.progressive=1", "producer.align=c", "producer.size=80", "composite.halign=c", "composite.geometry=0,10%:100%,100%", 
+  			"-attach-cut", "watermark:+$3.txt", "producer.align=c", "producer.fgcolour=red", "producer.size=40", "composite.progressive=1", "composite.valign=b", "composite.halign=c", "composite.geometry=0,0:100%,90%", 
+		},
+	},
+	
+	-- Chapter
 	{
 		pattern = "([^/]*) %-%- ([^/]*)$", 
 		value = {
-			"colour:black", "out=24",
 			"colour:black", "out=99",
 			"-attach", "watermark:+$2.txt", "composite.progressive=1", "producer.align=centre", "composite.valign=c", "composite.halign=c",
 			"-mix", "25", "-mixer", "luma",
 			"colour:black", "out=25",
 			"-mix", "25", "-mixer", "luma"
 		}
-	},
+	}
 }
 
 function runRule(clip, rule, args)
