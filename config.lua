@@ -137,6 +137,7 @@ end
 function montage(clips, theme)
 	-- load the theme (a file with a "rules" var definition)
 	if theme then
+		print ("Theme:", theme)
 		dofile(theme)
 	end
 	
@@ -172,5 +173,12 @@ end
 function init()
 	local defaultExist = runFile(home_dir .. "/.videokiss/default.lua")
 	runFile(home_dir .. "/.videokiss/config.lua")
+	default_rules = rules
+	default_clip_rule = clip_rule
 	return defaultExist
+end
+
+function loadDefaultRules()
+	rules = default_rules
+	clip_rule = default_clip_rule
 end

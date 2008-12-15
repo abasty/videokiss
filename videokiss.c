@@ -136,6 +136,7 @@ void getConfig(void)
 	char* clips_dir;
 	char* theme_file;
 	char* movie_dir;
+	gboolean theme;
 
 	clips_dir = getConfigString("clips_dir");
 	if (g_file_test(clips_dir, G_FILE_TEST_IS_DIR))
@@ -154,10 +155,14 @@ void getConfig(void)
 	}
 	
 	theme_file = getConfigString("theme_file");
-	if (g_file_test(theme_file, G_FILE_TEST_IS_REGULAR))
+	theme = g_file_test(theme_file, G_FILE_TEST_IS_REGULAR);
+	if (theme)
 	{
-		(void) gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(widget), theme_file);
+ 		gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(widget), theme_file);
 	}
+
+  	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget(globals.xml, "chkTheme")), theme);
+  	gtk_widget_set_sensitive(widget, theme);
 
 	movie_dir = getConfigString("movie_dir");
 	if (g_file_test(movie_dir, G_FILE_TEST_IS_DIR))
@@ -176,7 +181,6 @@ void getConfig(void)
 	gtk_combo_box_remove_text(GTK_COMBO_BOX(widget), 0);
 	getConfigList("formats", callbackGetConfigListFormatItem, widget);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(widget), 0);
-	
 }
 
 void saveConfig(void)
@@ -268,6 +272,19 @@ void on_fcClips_file_set(GtkWidget *widget, gpointer user_data)
 	setDefaultFilename();
 }
 
+void on_chkTheme_toggled(GtkWidget *widget, gpointer user_data)
+{
+	gboolean theme_active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+	
+	gtk_widget_set_sensitive(glade_xml_get_widget(globals.xml, "fcTheme"), theme_active);
+	if (!theme_active)
+	{
+		// reinstall default rules
+		lua_getglobal(globals.L, "loadDefaultRules");
+		lua_call(globals.L, 0, 0);
+	}
+}
+
 void on_btnMontage_clicked(GtkWidget *widget, gpointer user_data)
 {
 	GtkWidget* w;
@@ -343,7 +360,14 @@ void on_btnMontage_clicked(GtkWidget *widget, gpointer user_data)
  		}
  	
 	 	// get theme from UI
-	 	theme = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcTheme")));
+	 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget(globals.xml, "chkTheme"))))
+		{
+			theme = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcTheme")));
+		}
+		else
+		{
+			theme = NULL;
+		}
 	 	
 	 	// get output file if any = folder + name from UI
 		montage(clips, theme, consumer, width, height);
