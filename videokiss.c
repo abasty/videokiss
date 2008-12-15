@@ -223,10 +223,14 @@ void setDefaultFilename(void)
 		if (ext)
 		{
 			gchar* basename = g_path_get_basename(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcClips")))); // TODO memory leak
-			gchar* filename = g_strconcat(basename, ".", ext, NULL);
+			gchar* formatname = gtk_combo_box_get_active_text((GTK_COMBO_BOX(glade_xml_get_widget(globals.xml, "cmbFormat"))));
+			gchar* sizename = gtk_combo_box_get_active_text((GTK_COMBO_BOX(glade_xml_get_widget(globals.xml, "cmbSize"))));
+			gchar* filename = g_strconcat(basename, " - ", formatname, " - ", sizename, ".", ext, NULL);
 			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entOut")), filename);
 			g_free(basename);
 			g_free(filename);
+			g_free(formatname);
+			g_free(sizename);
 		}
 		g_free(ext);
 	}
@@ -252,6 +256,11 @@ void on_cmbFormat_changed(GtkWidget *widget, gpointer user_data)
 		
 		setDefaultFilename();
 	}
+}
+
+void on_cmbSize_changed(GtkWidget *widget, gpointer user_data)
+{
+	setDefaultFilename();
 }
 
 void on_fcClips_file_set(GtkWidget *widget, gpointer user_data)
@@ -408,7 +417,7 @@ int main(int argc, char *argv[])
 	// last window updates and show all
 	globals.wndMain = GTK_WINDOW(glade_xml_get_widget(globals.xml, "wndMain"));
   	gtk_window_set_icon(globals.wndMain,  gdk_pixbuf_new_from_inline(-1, videokiss_icon, FALSE, NULL));
-	gtk_widget_show_all(GTK_WIDGET(globals.wndMain));
+ 	gtk_widget_show(GTK_WIDGET(globals.wndMain));
 	
 	// run
 	gtk_main();
