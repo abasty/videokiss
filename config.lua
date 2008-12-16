@@ -41,7 +41,7 @@ formats = {
 		size = "720x576"
 	},
 	{
-		name = "TVIX (XVID/CD 3M)",
+		name = "TVIX (XVID 3M)",
 		consumer = "'avformat:$file' real_time=0",
  		codecs = "format=avi vcodec=xvid video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi",

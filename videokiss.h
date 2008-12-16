@@ -30,6 +30,8 @@
 
 #define _(x) gettext(x)
 
+#define DOMAINNAME "videokiss"
+
 # ifndef luaL_dobuffer
 #  define luaL_dobuffer(L, s, sz) \
     (luaL_loadbuffer(L, (const char*)s, sz, (const char*)s) || lua_pcall(L, 0, LUA_MULTRET, 0))
