@@ -35,37 +35,50 @@ formats = {
 	{
 		name = "Preview",
 		consumer = "sdl",
-		codecs = "profile=dv_pal"
+		codecs = "profile=dv_pal",
+		size = "720x576"
 	},
 	{
 		name = "TVIX (XVID 3MBits)",
 		consumer = "'avformat:$file' real_time=0",
  		codecs = "format=avi vcodec=xvid video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
-		ext = "avi"
+		ext = "avi",
+		size = "360x288"
 	},
 	{
-		name = "PC LQ (MPEG-4 3MBits)",
+		name = "Internet (MPEG-4 450 KBits/s)",
+		consumer = "'avformat:$file' real_time=0",
+ 		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=450000 audio_bit_rate=64000 frequency=48000 acodec=mp2 progressive=1";
+		ext = "avi",
+		size = "360x288"
+	},
+	{
+		name = "PC LQ (MPEG-4 3 MBits/s)",
 		consumer = "'avformat:$file' real_time=0",
  		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
-		ext = "avi"
+		ext = "avi",
+		size = "720x576"
 	},
 	{
-		name = "PC MQ (MPEG-4 5MBits)",
+		name = "PC MQ (MPEG-4 5 MBits/s)",
 		consumer = "'avformat:$file' real_time=0",
 		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=5000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
-		ext = "avi"
+		ext = "avi",
+		size = "720x576"
 	},
 	{
-		name = "PC HQ (MPEG-4 7MBits)",
+		name = "PC HQ (MPEG-4 7 MBits/s)",
 		consumer = "'avformat:$file' real_time=0",
 		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=7000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
-		ext = "avi"
+		ext = "avi",
+		size = "720x576"
 	},
 	{
 		name = "Video Editing (DV)",
 		consumer = "'avformat:$file' real_time=0",
 		codecs = "format=avi vcodec=dvvideo ildct=1 pix_fmt=yuv420p acodec=pcm_s16le profile=dv_pal",
-		ext = "avi"
+		ext = "avi",
+		size = "720x576"
 	},
 	
 	
@@ -74,6 +87,10 @@ formats = {
 -- Output sizes
 sizes = {
 	"360x288",
+	"360x270",
+	"300x225",
+	"240x180",
+	"192x144",
 	"720x576",
 	"480x360",
 	"640x480",

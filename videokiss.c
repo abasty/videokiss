@@ -161,8 +161,8 @@ void getConfig(void)
  		gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(widget), theme_file);
 	}
 
-  	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget(globals.xml, "chkTheme")), theme);
-  	gtk_widget_set_sensitive(widget, theme);
+  	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget(globals.xml, "chkTheme")), FALSE);
+  	gtk_widget_set_sensitive(widget,  FALSE);
 
 	movie_dir = getConfigString("movie_dir");
 	if (g_file_test(movie_dir, G_FILE_TEST_IS_DIR))
@@ -247,6 +247,7 @@ void on_cmbFormat_changed(GtkWidget *widget, gpointer user_data)
 	if (index >= 0)
 	{
 		gchar* codecs;
+		gchar* size;
 		gchar* formatCodecs;
 		
 		// make format box visible or not
@@ -257,6 +258,12 @@ void on_cmbFormat_changed(GtkWidget *widget, gpointer user_data)
 		formatCodecs = codecs ? codecs : "";
 		gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entFormat")), formatCodecs);
 		g_free(codecs);
+		
+		// get default size string and select it in the size list.
+		size = getConfigFormatString((guint) index + 1, "size");
+		if (size)
+			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entSize")), size);
+		g_free(size);
 		
 		setDefaultFilename();
 	}
