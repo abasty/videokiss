@@ -228,13 +228,12 @@ void setDefaultFilename(void)
 		{
 			gchar* basename = g_path_get_basename(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcClips")))); // TODO memory leak
 			gchar* formatname = gtk_combo_box_get_active_text((GTK_COMBO_BOX(glade_xml_get_widget(globals.xml, "cmbFormat"))));
-			gchar* sizename = gtk_combo_box_get_active_text((GTK_COMBO_BOX(glade_xml_get_widget(globals.xml, "cmbSize"))));
+			const gchar* sizename = gtk_entry_get_text((GTK_ENTRY(glade_xml_get_widget(globals.xml, "entSize"))));
 			gchar* filename = g_strconcat(basename, " - ", formatname, " - ", sizename, ".", ext, NULL);
 			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entOut")), filename);
 			g_free(basename);
 			g_free(filename);
 			g_free(formatname);
-			g_free(sizename);
 		}
 		g_free(ext);
 	}
@@ -297,91 +296,89 @@ void on_btnMontage_clicked(GtkWidget *widget, gpointer user_data)
 	GtkWidget* w;
 	gchar* clips = NULL;
 	gchar* consumer = NULL;
+	gchar* string;
+	int width = 0, height = 0;
+	char* end;
+	gint index;
+	gchar* theme = NULL;
 	
 	w = glade_xml_get_widget(globals.xml, "fcClips");
 	clips = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(w));
-	if (clips && *clips)
+	if (!clips && !*clips)
+		return;
+	
+	// get size from UI
+	w = glade_xml_get_widget(globals.xml, "cmbSize");
+	string = gtk_combo_box_get_active_text(GTK_COMBO_BOX(w));
+	if (string)
 	{
-		gchar* string;
-		int width, height;
-		char* end;
-		gint index;
-		gchar* theme = NULL;
-		
-		// get size from UI
-		w = glade_xml_get_widget(globals.xml, "cmbSize");
-		string = gtk_combo_box_get_active_text(GTK_COMBO_BOX(w));
-		if (string)
-		{
-			width = strtoull((char*) string, &end, 10);
-			if (end && *end)
-				height = strtoull(end + 1, NULL, 10);
-		}
-		if (width == 0)
-			width = 720;
-		if (height == 0)
-			height = 576;
-	 	g_free(string);
+		width = strtoull((char*) string, &end, 10);
+		if (end && *end)
+			height = strtoull(end + 1, NULL, 10);
+	}
+	if (width == 0)
+		width = 720;
+	if (height == 0)
+		height = 576;
+	g_free(string);
 
-	 	// get format = consumer from lua(+ outFile) + codecs from UI 
- 		w = glade_xml_get_widget(globals.xml, "cmbFormat");
-		index = gtk_combo_box_get_active(GTK_COMBO_BOX(w)) + 1;
- 		if (index >= 1)
- 		{
- 			gchar* file;
- 			// get consumer
- 			string = getConfigFormatString((guint) index, "consumer");
- 			
- 			// replace $file in consumer string to the out directory/file
- 			file = g_strstr_len(string, -1, "$file");
- 			if (file)
- 			{
- 				gchar* newString;
- 				gchar* fcOut;
- 				
- 				*file = 0;
- 				fcOut = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcOut")));
- 				newString = g_strconcat(
- 					string,
-					fcOut,
- 					"/",
- 					gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entOut"))),
- 					file + 5,
- 					NULL
- 				);
- 				
-			 	g_free(string);
-			 	g_free(fcOut);
-			 	string = newString;
- 			}
- 			
- 			// concat out format
- 			consumer = g_strconcat(
- 				string, 
- 				" ", 
- 				gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entFormat"))),
- 				NULL
- 			);
- 			
-		 	g_free(string);
- 		}
- 	
-	 	// get theme from UI
-	 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget(globals.xml, "chkTheme"))))
-		{
-			theme = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcTheme")));
-		}
-		else
-		{
-			theme = NULL;
-		}
-	 	
-	 	// get output file if any = folder + name from UI
-		montage(clips, theme, consumer, width, height);
+	// get format = consumer from lua(+ outFile) + codecs from UI 
+	w = glade_xml_get_widget(globals.xml, "cmbFormat");
+	index = gtk_combo_box_get_active(GTK_COMBO_BOX(w)) + 1;
+	if (index >= 1)
+	{
+		gchar* file;
+		// get consumer
+		string = getConfigFormatString((guint) index, "consumer");
 		
-	 	g_free(theme);
- 	}
+		// replace $file in consumer string to the out directory/file
+		file = g_strstr_len(string, -1, "$file");
+		if (file)
+		{
+			gchar* newString;
+			gchar* fcOut;
+			
+			*file = 0;
+			fcOut = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcOut")));
+			newString = g_strconcat(
+				string,
+				fcOut,
+				"/",
+				gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entOut"))),
+				file + 5,
+				NULL
+			);
+			
+			g_free(string);
+			g_free(fcOut);
+			string = newString;
+		}
+		
+		// concat out format
+		consumer = g_strconcat(
+			string, 
+			" ", 
+			gtk_entry_get_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entFormat"))),
+			NULL
+		);
+		
+		g_free(string);
+	}
 
+	// get theme from UI
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget(globals.xml, "chkTheme"))))
+	{
+		theme = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcTheme")));
+	}
+	else
+	{
+		theme = NULL;
+	}
+	
+	// get output file if any = folder + name from UI
+	montage(clips, theme, consumer, width, height);
+	
+	g_free(theme);
  	g_free(clips);
 	g_free(consumer);
 }
