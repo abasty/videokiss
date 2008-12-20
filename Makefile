@@ -10,8 +10,8 @@ release :
 	( cd build/release ; cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../.. && make )
 
 install : release
-	sudo install -s build/release/${BINARY} ${INSTALL_PREFIX}/bin
-	sudo install ${BINARY}.desktop ${INSTALL_PREFIX}/share/applications/${BINARY}.desktop
+	install -s build/release/${BINARY} ${INSTALL_PREFIX}/bin
+	install ${BINARY}.desktop ${INSTALL_PREFIX}/share/applications/${BINARY}.desktop
 	
 uninstall :
 	rm ${INSTALL_PREFIX}/bin/${BINARY}
