@@ -8,6 +8,10 @@ debug :
 release :
 	mkdir -p build/release 2>/dev/null
 	( cd build/release ; cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../.. && make )
+	
+i18n-template : *.glade *.h
+	xgettext -j -a *.h -o ${BINARY}.pot
+	xgettext -j *.glade -o ${BINARY}.pot
 
 install : release
 	install -s build/release/${BINARY} ${INSTALL_PREFIX}/bin
