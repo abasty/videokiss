@@ -86,7 +86,7 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	{
  		GtkWidget* dialog = gtk_message_dialog_new(globals.wndMain, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", STR_LUA_ERROR);
  		gtk_window_set_title(GTK_WINDOW(dialog), STR_LUA_ERROR_TITLE);
- 		gtk_dialog_run(GTK_DIALOG(dialog));
+ 		(void) gtk_dialog_run(GTK_DIALOG(dialog));
  		gtk_widget_destroy(dialog);
 	}
 

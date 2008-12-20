@@ -48,7 +48,7 @@ TypeGlobals globals;
 
 void on_SIGCHLD(int sig)
 {
-    signal(SIGCHLD, on_SIGCHLD);
+    (void) signal(SIGCHLD, on_SIGCHLD);
     while (wait3(NULL, WNOHANG, NULL) > 0);
 }
 
@@ -158,7 +158,7 @@ void getConfig(void)
 	theme = g_file_test(theme_file, G_FILE_TEST_IS_REGULAR);
 	if (theme)
 	{
- 		gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(widget), theme_file);
+ 		(void) gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(widget), theme_file);
 	}
 
   	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glade_xml_get_widget(globals.xml, "chkTheme")), FALSE);
@@ -226,11 +226,13 @@ void setDefaultFilename(void)
 		gchar* ext = getConfigFormatString((guint) index, "ext");
 		if (ext)
 		{
-			gchar* basename = g_path_get_basename(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcClips")))); // TODO memory leak
+			gchar* name = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(glade_xml_get_widget(globals.xml, "fcClips")));
+			gchar* basename = g_path_get_basename(name);
 			gchar* formatname = gtk_combo_box_get_active_text((GTK_COMBO_BOX(glade_xml_get_widget(globals.xml, "cmbFormat"))));
 			const gchar* sizename = gtk_entry_get_text((GTK_ENTRY(glade_xml_get_widget(globals.xml, "entSize"))));
 			gchar* filename = g_strconcat(basename, " - ", formatname, " - ", sizename, ".", ext, NULL);
 			gtk_entry_set_text(GTK_ENTRY(glade_xml_get_widget(globals.xml, "entOut")), filename);
+			g_free(name);
 			g_free(basename);
 			g_free(filename);
 			g_free(formatname);
@@ -395,7 +397,11 @@ int main(int argc, char *argv[])
 	int init;
 	
 	// avoid zombies
-	signal(SIGCHLD, on_SIGCHLD);
+	(void) signal(SIGCHLD, on_SIGCHLD);
+	
+	// i18n
+	(void) bindtextdomain(DOMAINNAME, LOCALEDIR);
+	(void) textdomain(DOMAINNAME);
 	
 	globals.home_dir = g_get_home_dir();
 
