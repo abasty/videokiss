@@ -9,10 +9,6 @@ release :
 	mkdir -p build/release 2>/dev/null
 	( cd build/release ; cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../.. && make )
 	
-i18n-template : *.glade *.h
-	xgettext -j -a *.h -o ${BINARY}.pot
-	xgettext -j *.glade -o ${BINARY}.pot
-
 install : release
 	install -s build/release/${BINARY} ${INSTALL_PREFIX}/bin
 	install ${BINARY}.desktop ${INSTALL_PREFIX}/share/applications/${BINARY}.desktop
@@ -24,6 +20,16 @@ uninstall :
 clean :
 	rm -rf build
 	rm -f *.icon 2>/dev/null
+
+i18n-template : *.glade *.h
+	xgettext -a *.h -o ${BINARY}.pot
+	xgettext -j *.glade -o ${BINARY}.pot
+	
+i18n-template-fr : i18n-template
+	msginit -l fr_FR.utf8
+	
+i18n-clean :
+	rm *.po* 2>/dev/null
 
 splint :
 	splint +unixlib -unrecog `pkg-config --cflags glib-2.0 gtk+-2.0 mlt-framework libglade-2.0` -I./lua/include -weak *.c
