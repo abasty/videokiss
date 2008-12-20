@@ -22,6 +22,7 @@ install : release
 uninstall :
 	rm ${INSTALL_PREFIX}/bin/${BINARY}
 	rm ${INSTALL_PREFIX}/share/applications/${BINARY}.desktop
+	rm ${INSTALL_PREFIX}/share/locale/fr/LC_MESSAGES/${BINARY}.mo
 
 clean :
 	rm -rf build
