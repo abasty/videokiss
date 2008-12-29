@@ -14,7 +14,7 @@ i18n :
 	mkdir -p ${I18N_BUILD} 2>/dev/null
 	msgfmt fr.po -o ${I18N_BUILD}/fr.mo
 
-install : release
+install : 
 	install -s build/release/${BINARY} ${INSTALL_PREFIX}/bin
 	install ${BINARY}.desktop ${INSTALL_PREFIX}/share/applications/${BINARY}.desktop
 	install ${I18N_BUILD}/fr.mo ${INSTALL_PREFIX}/share/locale/fr/LC_MESSAGES/${BINARY}.mo
