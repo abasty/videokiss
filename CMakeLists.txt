@@ -54,9 +54,11 @@ ADD_EXECUTABLE(
 	videokiss.c
 	inigo.c
 	montage.c
+	io.c
 
 	# headers
 	videokiss.h
+	io.h
 	
 	# embedded objects(lua script, glade file)
 	${VIDEOKISS_BINARY_DIR}/${CONFIG_LUA}.o
