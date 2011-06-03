@@ -1,0 +1,78 @@
+#### Tools
+LUAC := luac
+ZIP := zip
+UPX := upx
+
+#### Directories
+
+# Objects
+OBJECTS_DIR := $(BUILD_DIR)/$(TARGET)
+
+# Search Paths for sources
+vpath %.c $(SOURCE_DIRS)
+
+#### Files
+
+# Get all c and lua source files
+SOURCES := $(foreach dir, $(SOURCE_DIRS), $(wildcard $(dir)/*.c))
+
+# Translate each source file name into its object file name
+OBJECTS := $(addprefix $(OBJECTS_DIR)/, $(notdir $(SOURCES:.c=.o)))
+
+# Exe binary
+EXE_BINARY := $(OBJECTS_DIR)/$(EXE_NAME)$(SUF)
+
+#### Compilation/Link directories and options
+
+# Include directories
+INCLUDE_DIRECTORIES := -I$(SOURCE_DIRS)/lua/include $(addprefix -I, $(SOURCE_DIRS)) `pkg-config --cflags $(PACKAGES)` -I$(OBJECTS_DIR)
+
+# Libraries
+LINK_LIBRARIES := -llua -lpthread `pkg-config --libs-only-l $(PACKAGES)`
+
+# Libraries directories
+debug release: LINK_DIRECTORIES := -L$(SOURCE_DIRS)/lua -L$(OBJECTS_DIR) `pkg-config --libs-only-L $(PACKAGES)`
+
+# CFLAGS
+debug: CFLAGS := -g -Wall -DLUA_USE_LINUX -DLOCALEDIR='"/usr/share/locale"' -pipe 
+release: CFLAGS := -Wall -fexpensive-optimizations -O3 -DLUA_USE_LINUX -DLOCALEDIR='"/usr/share/locale"' -pipe
+
+#### Rules
+
+# Include header dependencies generated in the last build thanks to -MMD
+-include $(wildcard $(OBJECTS_DIR)/*.d)
+
+# Binary
+$(EXE_BINARY) : $(OBJECTS) $(OBJECTS_DIR)/$(CONFIG_FILE).o $(OBJECTS_DIR)/$(GLADE_FILE).o
+	@echo Linking $@
+	$(CC) -o $@ $(OBJECTS_DIR)/$(CONFIG_FILE).o $(OBJECTS_DIR)/$(GLADE_FILE).o $(OBJECTS) $(LINK_DIRECTORIES) $(LINK_LIBRARIES)
+
+# Objects
+$(OBJECTS_DIR)/%.o : %.c
+	@echo Compiling $@
+	$(CC) $(INCLUDE_DIRECTORIES) -MMD -c $(CFLAGS) $< -o $@
+
+# Embedded Icon
+$(OBJECTS_DIR)/$(EXE_NAME).icon.c : $(EXE_ICON)
+	@echo "Sourcing $@"
+	gdk-pixbuf-csource --raw --name=videokiss_icon $< > $@
+	
+# Embedded Lua config
+$(OBJECTS_DIR)/$(CONFIG_FILE).o : $(SOURCE_DIRS)/$(CONFIG_FILE)
+	@echo "Objectifying $@"
+	ln -sf $(SOURCE_DIRS)/$(CONFIG_FILE) $(OBJECTS_DIR)/$(CONFIG_FILE)
+	cd $(OBJECTS_DIR) ; objcopy --input binary --output elf32-i386 --binary-architecture i386 $(CONFIG_FILE) $(CONFIG_FILE).o
+
+# Embedded Glade file
+$(OBJECTS_DIR)/$(GLADE_FILE).o : $(SOURCE_DIRS)/$(GLADE_FILE)
+	@echo "Objectifying $@"
+	ln -sf $(SOURCE_DIRS)/$(GLADE_FILE) $(OBJECTS_DIR)/$(GLADE_FILE)
+	cd $(OBJECTS_DIR) ; objcopy --input binary --output elf32-i386 --binary-architecture i386 $(GLADE_FILE) $(GLADE_FILE).o
+
+#### Targets
+
+# Binary
+debug release: $(OBJECTS_DIR)/$(EXE_NAME).icon.c $(EXE_BINARY)
+
+.PHONY : all debug release clean distrib
+
