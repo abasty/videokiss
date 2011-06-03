@@ -77,8 +77,8 @@ formats = {
 		size = "360x288 (1.25)"
 	},
 	{
-		name = "RIP CD 4:3 (MPEG-4 800K) qscale=1",
-		consumer = "'avformat:$file' real_time=0",
+		name = "RIP CD 4:3 (MPEG-4 800K)",
+		consumer = "'avformat:$file' real_time=0 qscale=1",
  		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=800000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi",
 		size = "360x288 (1.25)"
