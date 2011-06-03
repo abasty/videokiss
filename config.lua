@@ -42,41 +42,42 @@ formats = {
 	},
 	{
 		name = "TVIX (XVID 3M)",
-		consumer = "'avformat:$file' real_time=0",
+		consumer = "'avformat:$file' real_time=0 qscale=1",
  		codecs = "format=avi vcodec=xvid video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
+-- 		codecs = "format=avi b=3000K ab=128K frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi",
 		size = "360x288 (1.25)"
 	},
 	{
 		name = "Internet (MPEG-4 100K)",
-		consumer = "'avformat:$file' real_time=0",
+		consumer = "'avformat:$file' real_time=0 qscale=1",
  		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=100000 audio_bit_rate=64000 frequency=32000 acodec=mp2 progressive=1";
 		ext = "avi",
 		size = "240x180 (1.33)"
 	},
 	{
 		name = "Internet (MPEG-4 150K)",
-		consumer = "'avformat:$file' real_time=0",
+		consumer = "'avformat:$file' real_time=0 qscale=1",
  		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=150000 audio_bit_rate=64000 frequency=32000 acodec=mp2 progressive=1";
 		ext = "avi",
 		size = "240x180 (1.33)"
 	},
 	{
 		name = "Internet (MPEG-4 300K)",
-		consumer = "'avformat:$file' real_time=0",
+		consumer = "'avformat:$file' real_time=0 qscale=1",
  		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=300000 audio_bit_rate=64000 frequency=32000 acodec=mp2 progressive=1";
 		ext = "avi",
 		size = "300x225 (1.33)"
 	},
 	{
 		name = "Internet (MPEG-4 450K)",
-		consumer = "'avformat:$file' real_time=0",
+		consumer = "'avformat:$file' real_time=0 qscale=1",
  		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=450000 audio_bit_rate=64000 frequency=32000 acodec=mp2 progressive=1";
 		ext = "avi",
 		size = "360x288 (1.25)"
 	},
 	{
-		name = "RIP CD 4:3 (MPEG-4 800K)",
+		name = "RIP CD 4:3 (MPEG-4 800K) qscale=1",
 		consumer = "'avformat:$file' real_time=0",
  		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=800000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi",
@@ -84,28 +85,28 @@ formats = {
 	},
 	{
 		name = "PC LQ (MPEG-4 3M)",
-		consumer = "'avformat:$file' real_time=0",
+		consumer = "'avformat:$file' real_time=0 qscale=1",
  		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=3000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi",
 		size = "720x576 (1.25)"
 	},
 	{
 		name = "PC MQ (MPEG-4 5M)",
-		consumer = "'avformat:$file' real_time=0",
+		consumer = "'avformat:$file' real_time=0 qscale=1",
 		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=5000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi",
 		size = "720x576 (1.25)"
 	},
 	{
 		name = "PC HQ (MPEG-4 7M)",
-		consumer = "'avformat:$file' real_time=0",
+		consumer = "'avformat:$file' real_time=0 qscale=1",
 		codecs = "format=avi video_rc_min_rate=0 video_bit_rate=7000000 audio_bit_rate=128000 frequency=48000 acodec=mp2 progressive=1";
 		ext = "avi",
 		size = "720x576 (1.25)"
 	},
 	{
 		name = "Video Editing (DV)",
-		consumer = "'avformat:$file' real_time=0",
+		consumer = "'avformat:$file' real_time=0 qscale=1",
 		codecs = "format=avi vcodec=dvvideo ildct=1 pix_fmt=yuv420p acodec=pcm_s16le profile=dv_pal",
 		ext = "avi",
 		size = "720x576 (1.25)"
