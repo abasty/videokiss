@@ -1,3 +1,10 @@
-Packages to install to compile
-mlt-dev
+= Packages to install to compile =
+cmake
+libmlt-dev
+libgtk2-dev
 libglade2-dev
+
+= Ubuntu =
+sudo apt-get install cmake libglade2-dev libmlt-dev
+
+

@@ -31,8 +31,7 @@
 
 #include "videokiss.h"
 
-#include "videokiss.icon"
-
+#include "videokiss.icon.c"
 
 // linked lua config file
 extern char _binary_config_lua_start;
