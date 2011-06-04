@@ -22,6 +22,7 @@
 #include <ftw.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <gtk/gtk.h>
 
@@ -29,7 +30,7 @@
 
 GPtrArray* files;
 
-int callbackFtw(const char *fpath, const struct stat *sb, int typeflag)
+int callbackFtw(const char *fpath, const struct stat64 *sb, int typeflag)
 {
 	if (fpath[0] != '.' && g_strstr_len(fpath, -1, "/.") == NULL)
 		g_ptr_array_add(files, g_strdup(fpath));
@@ -59,7 +60,8 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	// Get file listing from directory "clips"
 	files = g_ptr_array_new();
 	g_ptr_array_add(files, clips);
-	ftw(clips, callbackFtw, 10);
+	if (ftw64(clips, callbackFtw, 10) != 0)
+		fprintf(stderr, "error = %d\n", errno);
 
 	// sort the list
 	g_ptr_array_sort(files, callbackSort);
@@ -73,6 +75,7 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 	// parse the sorted array of files and add them to the lua table
 	for (i = 0; i < files->len; i++)
 	{
+//		fprintf(stderr, "files[%d] = %s\n", i, (char*) g_ptr_array_index(files, i));
 		lua_pushinteger(globals.L, i);
 		lua_pushstring(globals.L, (char*) g_ptr_array_index(files, i));		// string are copied by lua
 		lua_settable(globals.L, -3);

@@ -14,7 +14,7 @@ vpath %.c $(SOURCE_DIRS)
 
 #### Files
 
-# Get all c and lua source files
+# Get all c source files
 SOURCES := $(foreach dir, $(SOURCE_DIRS), $(wildcard $(dir)/*.c))
 
 # Translate each source file name into its object file name
@@ -35,8 +35,8 @@ LINK_LIBRARIES := -llua -lpthread `pkg-config --libs-only-l $(PACKAGES)`
 debug release: LINK_DIRECTORIES := -L$(SOURCE_DIRS)/lua -L$(OBJECTS_DIR) `pkg-config --libs-only-L $(PACKAGES)`
 
 # CFLAGS
-debug: CFLAGS := -g -Wall -DLUA_USE_LINUX -DLOCALEDIR='"/usr/share/locale"' -pipe -export-dynamic
-release: CFLAGS := -Wall -fexpensive-optimizations -O3 -DLUA_USE_LINUX -DLOCALEDIR='"/usr/share/locale"' -pipe -export-dynamic
+debug: CFLAGS := -g -Wall -DLUA_USE_LINUX -D_GNU_SOURCE -DLOCALEDIR='"/usr/share/locale"' -pipe -export-dynamic
+release: CFLAGS := -Wall -fexpensive-optimizations -O3 -DLUA_USE_LINUX -D_GNU_SOURCE -DLOCALEDIR='"/usr/share/locale"' -pipe -export-dynamic
 
 #### Rules
 

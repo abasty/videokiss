@@ -335,6 +335,8 @@ int inigo( int argc, char **argv )
 
 	for ( i = 1; i < argc; i ++ )
 	{
+//		fprintf(stderr, "argv[%d] = %s\n", i, argv[i]);
+		
 		// Check for serialisation switch
 		if ( !strcmp( argv[ i ], "-serialise" ) )
 		{
