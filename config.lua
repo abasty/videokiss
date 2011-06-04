@@ -49,6 +49,13 @@ formats = {
 		size = "360x288 (1.25)"
 	},
 	{
+		name = "iPhone (MPEG-4 VBR)",
+		consumer = "'avformat:$file' real_time=-4",
+ 		codecs = "vcodec=mpeg4 progressive=1 qscale=5 acodec=aac aq=0 ar=48000 ab=128K",
+		ext = "m4v",
+		size = "320x240 (1.33)"
+	},
+	{
 		name = "Internet (MPEG-4 100K)",
 		consumer = "'avformat:$file' real_time=0 qscale=1",
  		codecs = "format=avi progressive=1 b=100K ab=64K acodec=mp2";
