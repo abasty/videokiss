@@ -163,6 +163,12 @@ rules = {
 		value = clip_rule
 	},
 
+	-- Picture files
+	{ 
+		pattern = "%.[jJ][pP][gG]$", 
+		value = { "$0", "out=99", "-mix", "25", "-mixer", "luma", "-mixer", "mix:-1" }
+	},
+
 	-- Title
 	{
 		pattern = "([^/]*) %-%- ([^/]*) %-%- ([^/]*)$", 
