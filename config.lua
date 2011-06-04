@@ -142,6 +142,11 @@ rules = {
 	},
 
 	{ 
+		pattern = "%.mov$",
+		value = clip_rule
+	},
+
+	{ 
 		pattern = "%.wmv$", 
 		value = clip_rule
 	},

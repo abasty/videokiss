@@ -29,7 +29,7 @@ rules = {
 		value = {
 			"colour:black", "out=99",
  			"-attach-cut", "watermark:+$2.txt", "composite.progressive=1", "producer.align=c", "producer.size=80", "composite.halign=c", "composite.geometry=0,10%:100%,100%", 
-  			"-attach-cut", "watermark:+$3.txt", "producer.align=c", "producer.fgcolour=red", "producer.size=40", "composite.progressive=1", "composite.valign=b", "composite.halign=c", "composite.geometry=0,0:100%,90%", 
+  			"-attach-cut", "watermark:+$3.txt", "producer.align=c", "producer.fgcolour=green", "producer.size=40", "composite.progressive=1", "composite.valign=b", "composite.halign=c", "composite.geometry=0,0:100%,90%", 
 		},
 	},
 	{
