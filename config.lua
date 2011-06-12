@@ -33,6 +33,10 @@ movie_dir = home_dir .. "/Desktop"
 -- NOTE: This is not needed for the mpeg4 encoder that will preserve a video aspect ratio of 4:3 even with a size of 720:576 (1.25) 
 -- NOTE: No special file characters in name and size. They are used to build the final file name.
 -- NOTE: For the same video rate, decreasing size will increase quality.
+-- NOTE: Parameters on avformat encoder can be found here: http://www.mltframework.org/twiki/bin/view/MLT/ConsumerAvformat
+-- NOTE: MLT uses ffmpeg to encode video so most parameters are described in ffmpeg documentation as well
+-- NOTE: The MLT framework documentation is a great source of ideau to implement new transitions, new title effects, etc.
+
 formats = {
 	{
 		name = "Preview",
