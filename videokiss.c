@@ -305,7 +305,7 @@ void on_btnMontage_clicked(GtkWidget *widget, gpointer user_data)
 	
 	w = glade_xml_get_widget(globals.xml, "fcClips");
 	clips = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(w));
-	if (!clips && !*clips)
+	if (!clips || !*clips)
 		return;
 	
 	// get size from UI
