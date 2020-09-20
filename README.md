@@ -1,8 +1,9 @@
-= Packages to install to compile =
+# Packages to build
+
 gettext
 libmlt-dev
 libgtk2-dev
 libglade2-dev
 
-= Ubuntu =
+
 sudo apt-get install gettext libglade2-dev libmlt-dev
