@@ -22,8 +22,6 @@
 
 #include <libintl.h>
 
-#include <glade/glade.h>
-
 #include "lua.h"
 #include "lauxlib.h"
 #include "lualib.h"
@@ -54,14 +52,14 @@ typedef struct
 {
 	GladeXML *xml;
 	lua_State *L;
-		
+
 	GtkWindow* wndMain;
 
 	const char* home_dir;
-	
+
 	TypeFormat formats[MAX_FORMATS_COUNT];
 	int formats_count;
-	
+
 	char* cmdline;
 
 } TypeGlobals;

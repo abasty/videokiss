@@ -102,7 +102,7 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 		status = 1;
 		goto finalize;
 	}
-	
+
 	// format the inigo consumer string
 	consumer = g_strdup_printf("-consumer %s width=%d height=%d", format, width, height);
 	if (!g_shell_parse_argv(consumer, &consumer_splitc, &consumer_split, NULL))
@@ -110,20 +110,20 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 		status = 2;
 		goto finalize;
 	}
-	
+
 	// allocate argv
 	len_consumer = g_strv_length(consumer_split);
 	len_inigo = (guint) lua_objlen(globals.L, 1);
 	argc = (int) (len_consumer + len_inigo + 1);
 	argvp = argv = (char**) g_malloc(sizeof(char*) * (argc +  1));
-	
+
 	// add first (unused) arg to argv
 	*argvp++ = g_strdup("autoprod");
-	
+
 	// add consumer_split to argv
 	for (i = 0; i < len_consumer; i++)
 		*argvp++ = g_strdup(consumer_split[i]);
-		
+
 	// add montage table to argv
 	for (i = 0; i < len_inigo; i++)
 	{
@@ -132,10 +132,10 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 		*argvp++ = g_strdup(luaL_checkstring(globals.L, -1));
 		lua_pop(globals.L, 1);
 	}
-	
+
 	// add NULL to argv
 	*argvp++ = NULL;
-	
+
  	if (fork() == 0)
  	{
  		execvp(globals.cmdline, argv);
@@ -145,15 +145,15 @@ int montage(char* clips, char* theme, char* format, int width, int height)
 finalize:
 	// remove lua result
 	lua_pop(globals.L, 1);
-	
+
 	// free consumer
 	g_free(consumer);
-	
+
 	// free consumer split
 	g_strfreev(consumer_split);
-	
+
 	// free inigo args
   	g_strfreev(argv);
-	
+
 	return status;
 }

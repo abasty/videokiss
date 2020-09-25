@@ -56,7 +56,7 @@ $(OBJECTS_DIR)/%.o : %.c
 $(OBJECTS_DIR)/$(EXE_NAME).icon.c : $(EXE_ICON)
 	@echo "Sourcing $@"
 	gdk-pixbuf-csource --raw --name=videokiss_icon $< > $@
-	
+
 # Embedded Lua config
 $(OBJECTS_DIR)/$(CONFIG_FILE).o : $(SOURCE_DIRS)/$(CONFIG_FILE)
 	@echo "Objectifying $@"
